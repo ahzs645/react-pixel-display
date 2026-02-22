@@ -1,0 +1,104 @@
+---
+title: Basic Usage
+draft: false
+description: Learn how to render text, custom pixels, and style your display.
+---
+
+import Demo from '../../../components/Demo.tsx';
+
+## Rendering text
+
+Pass a `text` prop to display a string on the LED matrix:
+
+<Demo client:load text="HELLO" />
+
+```tsx
+<PixelDisplay text="HELLO" />
+```
+
+## Changing colors
+
+Use `foregroundColor` and `backgroundColor` to customize the palette:
+
+<Demo client:load text="RED" foregroundColor="#ff0000" backgroundColor="#1a0000" />
+
+<Demo client:load text="CYAN" foregroundColor="#00ffff" backgroundColor="#001a1a" />
+
+<Demo client:load text="GREEN" foregroundColor="#00ff00" backgroundColor="#001a00" />
+
+```tsx
+<PixelDisplay text="RED" foregroundColor="#ff0000" backgroundColor="#1a0000" />
+<PixelDisplay text="CYAN" foregroundColor="#00ffff" backgroundColor="#001a1a" />
+<PixelDisplay text="GREEN" foregroundColor="#00ff00" backgroundColor="#001a00" />
+```
+
+## Adjusting dimensions
+
+Control the grid size with `width` and `height` (in pixels), and visual size with `scale`:
+
+<Demo client:load text="BIG" width={32} height={16} scale={10} foregroundColor="#ffcc00" />
+
+<Demo client:load text="WIDE DISPLAY" width={128} height={16} scale={4} foregroundColor="#ff6600" />
+
+```tsx
+{/* Large scale, small grid */}
+<PixelDisplay text="BIG" width={32} height={16} scale={10} />
+
+{/* Wide display */}
+<PixelDisplay text="WIDE DISPLAY" width={128} height={16} scale={4} />
+```
+
+## Pixel gap
+
+The `pixelGap` prop controls the spacing between individual pixels. A value of `0` means no gap (solid), while higher values create a more pronounced LED-dot look:
+
+<Demo client:load text="NO GAP" pixelGap={0} foregroundColor="#ff6600" />
+
+<Demo client:load text="GAPPED" pixelGap={0.3} foregroundColor="#ff6600" />
+
+```tsx
+<PixelDisplay text="NO GAP" pixelGap={0} />
+<PixelDisplay text="GAPPED" pixelGap={0.3} />
+```
+
+## Glow effect
+
+The `glow` prop adds a soft LED bloom. It is enabled by default:
+
+<Demo client:load text="GLOW ON" glow={true} foregroundColor="#ff6600" />
+
+<Demo client:load text="GLOW OFF" glow={false} foregroundColor="#ff6600" />
+
+```tsx
+<PixelDisplay text="GLOW ON" glow={true} />
+<PixelDisplay text="GLOW OFF" glow={false} />
+```
+
+## Custom pixel data
+
+Instead of text you can pass raw pixel data via the `pixels` prop. This is an array of hex color strings — one per pixel, row by row:
+
+```tsx
+const checkerboard: string[] = [];
+for (let y = 0; y < 8; y++) {
+  for (let x = 0; x < 8; x++) {
+    checkerboard.push((x + y) % 2 === 0 ? '#ff6600' : '#000000');
+  }
+}
+
+<PixelDisplay pixels={checkerboard} width={8} height={8} scale={12} />
+```
+
+When `pixels` is provided it takes precedence over `text`.
+
+## Styling the container
+
+You can pass `className` and `style` to customise the outer `<div>`:
+
+```tsx
+<PixelDisplay
+  text="STYLED"
+  className="my-display"
+  style={{ border: '2px solid #333', borderRadius: '8px' }}
+/>
+```

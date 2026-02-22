@@ -1,0 +1,116 @@
+---
+title: Props
+draft: false
+description: Complete reference for all PixelDisplay props.
+---
+
+import Demo from '../../../components/Demo.tsx';
+
+## PixelDisplayProps
+
+All props are optional. The component renders a blank display with default values if no props are provided.
+
+<Demo client:load />
+
+```tsx
+<PixelDisplay />
+```
+
+### Content
+
+| Prop       | Type         | Default      | Description                                    |
+| ---------- | ------------ | ------------ | ---------------------------------------------- |
+| `text`     | `string`     | —            | Text to render on the display                  |
+| `pixels`   | `HexColor[]` | —            | Raw pixel data (overrides `text` when provided)|
+
+### Dimensions
+
+| Prop       | Type     | Default | Description                              |
+| ---------- | -------- | ------- | ---------------------------------------- |
+| `width`    | `number` | `64`    | Display width in pixels                  |
+| `height`   | `number` | `16`    | Display height in pixels                 |
+| `scale`    | `number` | `8`     | Visual scale multiplier                  |
+| `pixelGap` | `number` | `0.15`  | Gap between pixels (0 = solid)           |
+
+### Appearance
+
+| Prop              | Type       | Default     | Description                      |
+| ----------------- | ---------- | ----------- | -------------------------------- |
+| `foregroundColor`  | `HexColor` | `'#ff6600'` | Text / pixel color               |
+| `backgroundColor`  | `HexColor` | `'#111'`    | Background color                 |
+| `glow`            | `boolean`  | `true`      | Enable LED glow bloom            |
+
+### Effects
+
+| Prop     | Type         | Default   | Description                |
+| -------- | ------------ | --------- | -------------------------- |
+| `effect` | `EffectName` | `'fixed'` | Animation effect name      |
+| `speed`  | `number`     | `50`      | Animation speed            |
+
+See the [Effects guide](/guides/effects/) for all 24 effect names and live demos.
+
+### Font
+
+| Prop           | Type           | Default          | Description                       |
+| -------------- | -------------- | ---------------- | --------------------------------- |
+| `font`         | `FontType`     | `'legacy'`       | Font renderer: `'legacy'` \| `'canvas'` \| `'bdf'` |
+| `fontName`     | `string`       | `'VCR_OSD_MONO'` | Font name for canvas/BDF          |
+| `fontResolver` | `FontResolver` | —                | Custom URL resolver for font files|
+
+See the [Fonts guide](/guides/fonts/) for details on each font system.
+
+### Renderer
+
+| Prop       | Type           | Default       | Description                                |
+| ---------- | -------------- | ------------- | ------------------------------------------ |
+| `renderer` | `RendererType` | `'imagedata'` | Backend: `'imagedata'` \| `'canvas'` \| `'svg'` |
+
+See the [Renderers guide](/guides/renderers/) for a comparison.
+
+### Callbacks
+
+| Prop      | Type         | Default | Description                                |
+| --------- | ------------ | ------- | ------------------------------------------ |
+| `onReady` | `() => void` | —       | Called when the component is ready to render|
+
+### Styling
+
+| Prop        | Type                    | Default | Description                 |
+| ----------- | ----------------------- | ------- | --------------------------- |
+| `className` | `string`                | —       | CSS class for the outer div |
+| `style`     | `React.CSSProperties`  | —       | Inline styles for outer div |
+
+## Full example
+
+<Demo
+  client:load
+  text="FULL"
+  width={64}
+  height={16}
+  scale={6}
+  pixelGap={0.2}
+  foregroundColor="#ff00ff"
+  backgroundColor="#110011"
+  effect="breeze"
+  speed={40}
+  glow={true}
+  renderer="imagedata"
+  font="legacy"
+/>
+
+```tsx
+<PixelDisplay
+  text="FULL"
+  width={64}
+  height={16}
+  scale={6}
+  pixelGap={0.2}
+  foregroundColor="#ff00ff"
+  backgroundColor="#110011"
+  effect="breeze"
+  speed={40}
+  glow={true}
+  renderer="imagedata"
+  font="legacy"
+/>
+```

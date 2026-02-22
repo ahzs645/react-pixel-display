@@ -1,0 +1,91 @@
+---
+title: Installation
+draft: false
+description: How to install react-pixel-display in your project.
+---
+
+## Install the package
+
+```bash
+# npm
+npm install react-pixel-display
+
+# yarn
+yarn add react-pixel-display
+
+# pnpm
+pnpm add react-pixel-display
+```
+
+React 17 or later is required as a peer dependency.
+
+## Import the component
+
+```tsx
+import { PixelDisplay } from 'react-pixel-display';
+```
+
+If you only need the framework-agnostic core (renderers, effects, font helpers), import from the `core` sub-path:
+
+```ts
+import {
+  ImageDataLEDRenderer,
+  EffectManager,
+  textToPixels,
+} from 'react-pixel-display/core';
+```
+
+## Verify it works
+
+Drop this into any React component to confirm everything is wired up:
+
+```tsx
+import { PixelDisplay } from 'react-pixel-display';
+
+export default function App() {
+  return (
+    <PixelDisplay
+      text="HELLO"
+      width={64}
+      height={16}
+      foregroundColor="#00ff88"
+      glow
+    />
+  );
+}
+```
+
+You should see a glowing green LED display showing **HELLO**.
+
+## Using in Astro / MDX
+
+Because `PixelDisplay` is a client-side React component, you need to hydrate it in Astro with the `client:load` directive. Create a wrapper component:
+
+```tsx title="src/components/Demo.tsx"
+import { PixelDisplay } from 'react-pixel-display';
+import type { PixelDisplayProps } from 'react-pixel-display';
+
+export default function Demo(props: PixelDisplayProps) {
+  return (
+    <div style={{ margin: '1.5rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block' }}>
+      <PixelDisplay width={64} height={16} scale={6} glow {...props} />
+    </div>
+  );
+}
+```
+
+Then use it in any `.mdx` file:
+
+```mdx
+---
+title: My Page
+---
+
+import Demo from '../components/Demo.tsx';
+
+Look at this display:
+
+<Demo client:load text="IT WORKS" foregroundColor="#ff6600" />
+```
+
+The `client:load` directive tells Astro to hydrate the component immediately when the page loads, which is important since the display renders to a `<canvas>`.

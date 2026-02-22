@@ -1,0 +1,244 @@
+---
+title: Types
+draft: false
+description: TypeScript type reference for react-pixel-display.
+---
+
+All types are exported from both `react-pixel-display` and `react-pixel-display/core`.
+
+```ts
+import type {
+  PixelDisplayProps,
+  PixelDisplayRef,
+  HexColor,
+  PixelArray,
+  EffectName,
+  FontType,
+  RendererType,
+} from 'react-pixel-display';
+```
+
+## Pixel data
+
+### `HexColor`
+
+```ts
+type HexColor = string;
+```
+
+A CSS hex color string, e.g. `'#ff6600'` or `'#000'`.
+
+### `RGBColor`
+
+```ts
+type RGBColor = [number, number, number];
+```
+
+An RGB tuple with values 0–255.
+
+### `PixelArray`
+
+```ts
+type PixelArray = HexColor[];
+```
+
+A flat array of hex colors representing every pixel in the display, row by row from top-left.
+
+## Effects
+
+### `EffectName`
+
+```ts
+type EffectName = TextEffectName | AmbientEffectName | ColorEffectName;
+```
+
+Union of all valid effect names.
+
+### `TextEffectName`
+
+```ts
+type TextEffectName =
+  | 'fixed' | 'scroll_ltr' | 'scroll_rtl' | 'blink' | 'breeze'
+  | 'snow' | 'laser' | 'fade' | 'typewriter' | 'bounce' | 'sparkle';
+```
+
+### `AmbientEffectName`
+
+```ts
+type AmbientEffectName =
+  | 'rainbow' | 'matrix' | 'plasma' | 'gradient' | 'fire'
+  | 'water' | 'stars' | 'confetti' | 'plasma_wave' | 'radial_pulse'
+  | 'hypnotic' | 'lava' | 'aurora';
+```
+
+### `ColorEffectName`
+
+```ts
+type ColorEffectName = 'color_cycle' | 'rainbow_text' | 'neon';
+```
+
+### `EffectState`
+
+```ts
+interface EffectState {
+  tick: number;
+  speed?: number;
+  [key: string]: unknown;
+}
+```
+
+Internal state passed to effect functions each frame.
+
+### `EffectInfo`
+
+```ts
+interface EffectInfo {
+  category: EffectCategory;
+  name: string;
+  description: string;
+}
+```
+
+Metadata about an effect, used by `EFFECTS` and `EffectManager`.
+
+## Fonts
+
+### `FontType`
+
+```ts
+type FontType = 'legacy' | 'canvas' | 'bdf';
+```
+
+### `FontResolver`
+
+```ts
+interface FontResolver {
+  (fontName: string, fileName?: string): string;
+}
+```
+
+A function that returns the URL for a given font. Used by the `canvas` and `bdf` font systems.
+
+### `FontMetrics`
+
+```ts
+interface FontMetrics {
+  font_size: number;
+  offset: [number, number];
+  pixel_threshold: number;
+  var_width: boolean;
+}
+```
+
+### `BdfFontConfig`
+
+```ts
+interface BdfFontConfig {
+  file: string;
+  yOffset: number;
+}
+```
+
+## Renderer
+
+### `RendererType`
+
+```ts
+type RendererType = 'imagedata' | 'canvas' | 'svg';
+```
+
+### `RendererOptions`
+
+```ts
+interface RendererOptions {
+  width?: number;
+  height?: number;
+  pixelGap?: number;
+  glow?: boolean;
+  scale?: number;
+}
+```
+
+Passed to renderer constructors (`ImageDataLEDRenderer`, `CanvasLEDRenderer`, `SVGLEDMatrixRenderer`).
+
+### `LEDRenderer`
+
+```ts
+interface LEDRenderer {
+  readonly width: number;
+  readonly height: number;
+  readonly isRunning: boolean;
+  extendedWidth: number;
+  buffer: RGBColor[];
+
+  setPixel(x: number, y: number, color: RGBColor): void;
+  clear(): void;
+  flush(): void;
+  setData(
+    pixels: PixelArray,
+    extendedPixels?: PixelArray | null,
+    extendedWidth?: number | null,
+  ): void;
+  setEffect(effect: string, speed?: number): void;
+  start(): void;
+  stop(): void;
+  renderStatic(): void;
+  setDimensions(width: number, height: number): void;
+  setContainer(container: HTMLElement): void;
+  destroy(): void;
+}
+```
+
+The interface implemented by all three renderer backends.
+
+## React component
+
+### `PixelDisplayProps`
+
+```ts
+interface PixelDisplayProps {
+  width?: number;
+  height?: number;
+  pixels?: PixelArray;
+  text?: string;
+  font?: FontType | string;
+  fontUrl?: string;
+  fontName?: string;
+  foregroundColor?: HexColor;
+  backgroundColor?: HexColor;
+  effect?: EffectName;
+  speed?: number;
+  renderer?: RendererType;
+  glow?: boolean;
+  scale?: number;
+  pixelGap?: number;
+  fontResolver?: FontResolver;
+  onReady?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
+}
+```
+
+### `PixelDisplayRef`
+
+```ts
+interface PixelDisplayRef {
+  start(): void;
+  stop(): void;
+  getRenderer(): LEDRenderer | null;
+  isRunning(): boolean;
+}
+```
+
+The imperative handle exposed via `React.forwardRef`. See the [Ref API](/reference/ref-api/) guide.
+
+## ScrollPixelsResult
+
+```ts
+interface ScrollPixelsResult {
+  pixels: PixelArray;
+  width: number;
+}
+```
+
+Returned by `textToScrollPixels`, `textToScrollPixelsCanvas`, and `textToScrollPixelsBdf`.

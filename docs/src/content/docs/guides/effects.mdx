@@ -1,0 +1,284 @@
+---
+title: Effects
+draft: false
+description: Browse all 24 built-in effects and learn how to use them.
+---
+
+import Demo from '../../../components/Demo.tsx';
+
+The `effect` prop selects an animation effect. There are three categories: **text**, **ambient**, and **color**.
+
+## Text effects
+
+Text effects animate your text content. Pass any text via the `text` prop.
+
+### fixed (default)
+
+Static display — no animation.
+
+<Demo client:load text="STATIC" effect="fixed" foregroundColor="#ff6600" />
+
+```tsx
+<PixelDisplay text="STATIC" effect="fixed" />
+```
+
+### scroll_rtl
+
+Text scrolls continuously from right to left.
+
+<Demo client:load text="SCROLLING RIGHT TO LEFT" effect="scroll_rtl" speed={40} foregroundColor="#ff6600" />
+
+```tsx
+<PixelDisplay text="SCROLLING RIGHT TO LEFT" effect="scroll_rtl" speed={40} />
+```
+
+### scroll_ltr
+
+Text scrolls continuously from left to right.
+
+<Demo client:load text="SCROLLING LEFT TO RIGHT" effect="scroll_ltr" speed={40} foregroundColor="#00ccff" />
+
+```tsx
+<PixelDisplay text="SCROLLING LEFT TO RIGHT" effect="scroll_ltr" speed={40} />
+```
+
+### blink
+
+Text blinks on and off.
+
+<Demo client:load text="BLINK" effect="blink" speed={30} foregroundColor="#ff0000" />
+
+```tsx
+<PixelDisplay text="BLINK" effect="blink" speed={30} />
+```
+
+### breeze
+
+Gentle brightness wave sweeps across the text.
+
+<Demo client:load text="BREEZE" effect="breeze" speed={50} foregroundColor="#00ff88" />
+
+```tsx
+<PixelDisplay text="BREEZE" effect="breeze" />
+```
+
+### snow
+
+Sparkle overlay on top of the text.
+
+<Demo client:load text="SNOW" effect="snow" speed={50} foregroundColor="#ffffff" />
+
+```tsx
+<PixelDisplay text="SNOW" effect="snow" />
+```
+
+### laser
+
+A scanning beam sweeps across the text.
+
+<Demo client:load text="LASER" effect="laser" speed={40} foregroundColor="#ff0044" />
+
+```tsx
+<PixelDisplay text="LASER" effect="laser" speed={40} />
+```
+
+### fade
+
+Text fades in and out.
+
+<Demo client:load text="FADE" effect="fade" speed={30} foregroundColor="#ffcc00" />
+
+```tsx
+<PixelDisplay text="FADE" effect="fade" speed={30} />
+```
+
+### typewriter
+
+Characters appear one at a time.
+
+<Demo client:load text="TYPEWRITER" effect="typewriter" speed={20} foregroundColor="#00ff00" />
+
+```tsx
+<PixelDisplay text="TYPEWRITER" effect="typewriter" speed={20} />
+```
+
+### bounce
+
+Text bounces back and forth.
+
+<Demo client:load text="BOUNCE" effect="bounce" speed={40} foregroundColor="#ff8800" />
+
+```tsx
+<PixelDisplay text="BOUNCE" effect="bounce" speed={40} />
+```
+
+### sparkle
+
+Random sparkle effect overlaid on the text.
+
+<Demo client:load text="SPARKLE" effect="sparkle" speed={50} foregroundColor="#ff66ff" />
+
+```tsx
+<PixelDisplay text="SPARKLE" effect="sparkle" />
+```
+
+---
+
+## Ambient effects
+
+Ambient effects fill the entire display and do **not** require any text. They render animated backgrounds.
+
+### rainbow
+
+<Demo client:load effect="rainbow" speed={50} />
+
+```tsx
+<PixelDisplay effect="rainbow" />
+```
+
+### matrix
+
+<Demo client:load effect="matrix" speed={50} />
+
+```tsx
+<PixelDisplay effect="matrix" />
+```
+
+### plasma
+
+<Demo client:load effect="plasma" speed={50} />
+
+```tsx
+<PixelDisplay effect="plasma" />
+```
+
+### fire
+
+<Demo client:load effect="fire" speed={50} />
+
+```tsx
+<PixelDisplay effect="fire" />
+```
+
+### water
+
+<Demo client:load effect="water" speed={50} />
+
+```tsx
+<PixelDisplay effect="water" />
+```
+
+### stars
+
+<Demo client:load effect="stars" speed={50} />
+
+```tsx
+<PixelDisplay effect="stars" />
+```
+
+### confetti
+
+<Demo client:load effect="confetti" speed={50} />
+
+```tsx
+<PixelDisplay effect="confetti" />
+```
+
+### gradient
+
+<Demo client:load effect="gradient" speed={50} />
+
+```tsx
+<PixelDisplay effect="gradient" />
+```
+
+### plasma_wave
+
+<Demo client:load effect="plasma_wave" speed={50} />
+
+```tsx
+<PixelDisplay effect="plasma_wave" />
+```
+
+### radial_pulse
+
+<Demo client:load effect="radial_pulse" speed={50} />
+
+```tsx
+<PixelDisplay effect="radial_pulse" />
+```
+
+### hypnotic
+
+<Demo client:load effect="hypnotic" speed={50} />
+
+```tsx
+<PixelDisplay effect="hypnotic" />
+```
+
+### lava
+
+<Demo client:load effect="lava" speed={50} />
+
+```tsx
+<PixelDisplay effect="lava" />
+```
+
+### aurora
+
+<Demo client:load effect="aurora" speed={50} />
+
+```tsx
+<PixelDisplay effect="aurora" />
+```
+
+---
+
+## Color effects
+
+Color effects apply colour transformations to your text.
+
+### color_cycle
+
+Cycles the text colour through the spectrum.
+
+<Demo client:load text="CYCLE" effect="color_cycle" speed={50} />
+
+```tsx
+<PixelDisplay text="CYCLE" effect="color_cycle" />
+```
+
+### rainbow_text
+
+Applies a rainbow gradient across the text.
+
+<Demo client:load text="RAINBOW" effect="rainbow_text" speed={50} />
+
+```tsx
+<PixelDisplay text="RAINBOW" effect="rainbow_text" />
+```
+
+### neon
+
+Pulsing neon glow effect.
+
+<Demo client:load text="NEON" effect="neon" speed={50} foregroundColor="#ff00ff" />
+
+```tsx
+<PixelDisplay text="NEON" effect="neon" foregroundColor="#ff00ff" />
+```
+
+---
+
+## Controlling speed
+
+All animated effects accept a `speed` prop (default `50`). Lower values are slower, higher values are faster:
+
+<Demo client:load text="SLOW" effect="scroll_rtl" speed={15} foregroundColor="#ff6600" />
+
+<Demo client:load text="FAST" effect="scroll_rtl" speed={80} foregroundColor="#ff6600" />
+
+```tsx
+<PixelDisplay text="SLOW" effect="scroll_rtl" speed={15} />
+<PixelDisplay text="FAST" effect="scroll_rtl" speed={80} />
+```

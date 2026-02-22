@@ -1,0 +1,42 @@
+---
+title: Introduction
+draft: false
+description: An LED matrix display simulator for React and vanilla JavaScript.
+---
+
+import Demo from '../../../components/Demo.tsx';
+
+**React Pixel Display** is a high-performance LED matrix display simulator that renders text, effects, and custom pixel data in the browser.
+
+<Demo client:load text="HELLO!" effect="fixed" foregroundColor="#00ff88" />
+
+It supports three rendering backends, 24 built-in effects, multiple font systems, and works both as a **React component** and as a **vanilla JavaScript** library.
+
+## Features
+
+- **React component** with a simple prop-based API
+- **Three renderers** — ImageData (fastest), Canvas, and SVG
+- **24 effects** across text, ambient, and color categories
+- **Three font systems** — built-in bitmap, TTF/web fonts, and BDF bitmap fonts
+- **Vanilla JS API** for use without React
+- **TypeScript** — full type definitions included
+- **Tiny footprint** — only two runtime dependencies
+
+## Quick look
+
+Here is a scrolling display you can drop into any React app:
+
+<Demo client:load text="react-pixel-display" effect="scroll_rtl" speed={40} foregroundColor="#ff6600" />
+
+```tsx
+import { PixelDisplay } from 'react-pixel-display';
+
+<PixelDisplay
+  text="react-pixel-display"
+  effect="scroll_rtl"
+  speed={40}
+  foregroundColor="#ff6600"
+/>
+```
+
+Ready to get started? Head to the [Installation](/getting-started/installation/) page.

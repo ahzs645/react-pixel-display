@@ -1,0 +1,56 @@
+---
+title: Renderers
+draft: false
+description: Choose between three rendering backends.
+---
+
+import Demo from '../../../components/Demo.tsx';
+
+React Pixel Display supports three rendering backends, selectable via the `renderer` prop.
+
+## ImageData (default)
+
+Uses the Canvas `ImageData` API for direct pixel manipulation. This is the **fastest** renderer and supports GPU-accelerated glow.
+
+<Demo client:load text="IMAGEDATA" renderer="imagedata" foregroundColor="#ff6600" />
+
+```tsx
+<PixelDisplay text="IMAGEDATA" renderer="imagedata" />
+```
+
+Best for: performance-critical displays, animated effects, large grids.
+
+## Canvas
+
+Uses the standard Canvas 2D drawing API, drawing individual pixel squares with configurable gaps.
+
+<Demo client:load text="CANVAS" renderer="canvas" foregroundColor="#00ccff" />
+
+```tsx
+<PixelDisplay text="CANVAS" renderer="canvas" />
+```
+
+Best for: a good balance of features and performance.
+
+## SVG
+
+Renders each pixel as an SVG `<rect>` element. Scales perfectly at any resolution since it's vector-based.
+
+<Demo client:load text="SVG" renderer="svg" foregroundColor="#00ff88" />
+
+```tsx
+<PixelDisplay text="SVG" renderer="svg" />
+```
+
+Best for: resolution independence, printing, cases where you need DOM access to individual pixels.
+
+## Comparison
+
+| Feature          | ImageData        | Canvas          | SVG             |
+| ---------------- | ---------------- | --------------- | --------------- |
+| **Speed**        | Fastest          | Fast            | Slower          |
+| **Glow**         | GPU-accelerated  | CSS-based       | CSS-based       |
+| **Scalability**  | Bitmap           | Bitmap          | Vector          |
+| **DOM access**   | No               | No              | Yes (per rect)  |
+
+For most use cases, the default `imagedata` renderer is the best choice.
