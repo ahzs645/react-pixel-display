@@ -1,0 +1,110 @@
+---
+title: Fonts
+draft: false
+description: Switch between the three font rendering systems.
+---
+
+import Demo from '../../../components/Demo.tsx';
+
+React Pixel Display ships with three font rendering systems. Select one with the `font` prop.
+
+## Legacy (default)
+
+The built-in 5×7 bitmap font. Always available with no network requests — ideal for small displays.
+
+<Demo client:load text="LEGACY" font="legacy" foregroundColor="#ff6600" />
+
+```tsx
+<PixelDisplay text="LEGACY" font="legacy" />
+```
+
+This font supports uppercase and lowercase letters, digits, and common symbols.
+
+## Canvas (TTF / web fonts)
+
+Renders text using a TTF web font loaded via CSS `@font-face`. This produces smoother text at larger sizes.
+
+```tsx
+<PixelDisplay
+  text="Canvas"
+  font="canvas"
+  fontName="VCR_OSD_MONO"
+  width={128}
+  height={32}
+  scale={4}
+/>
+```
+
+### Available font names
+
+| Name            | Description                    |
+| --------------- | ------------------------------ |
+| `VCR_OSD_MONO`  | Monospace VCR-style (default)  |
+| `CUSONG`        | CJK-compatible song typeface   |
+
+### Custom font resolver
+
+If your fonts live at a custom URL, pass a `fontResolver`:
+
+```tsx
+<PixelDisplay
+  text="Custom"
+  font="canvas"
+  fontResolver={(fontName) => `/assets/fonts/${fontName}.ttf`}
+/>
+```
+
+## BDF (Bitmap Distribution Format)
+
+Loads external `.bdf` bitmap font files. BDF fonts render pixel-perfect at their native size.
+
+```tsx
+<PixelDisplay
+  text="BDF font"
+  font="bdf"
+  fontName="VCR_OSD_MONO"
+  width={128}
+  height={32}
+  scale={4}
+/>
+```
+
+### Configuring font paths
+
+Use `configureFonts` to set the base URL or a custom resolver for font files:
+
+```tsx
+import { configureFonts } from 'react-pixel-display';
+
+// Point to your hosted fonts
+configureFonts({
+  baseUrl: '/fonts',
+});
+
+// Or use a fully custom resolver
+configureFonts({
+  bdfResolver: (fontName, fileName) =>
+    `https://cdn.example.com/fonts/${fileName}`,
+});
+```
+
+### Available BDF fonts
+
+Each font is available at 16, 24, and 32 pixel sizes:
+
+| Font            | Sizes         |
+| --------------- | ------------- |
+| `VCR_OSD_MONO`  | 16, 24, 32 px |
+| `CUSONG`        | 16, 24, 32 px |
+
+## Comparing fonts
+
+The legacy font works best for small displays (height ≤ 16). For larger displays, use `canvas` or `bdf` with a taller height for more detail.
+
+```tsx
+{/* Small — legacy works great */}
+<PixelDisplay text="Small" font="legacy" width={64} height={16} />
+
+{/* Large — use canvas or bdf for sharper rendering */}
+<PixelDisplay text="Large" font="canvas" width={128} height={32} scale={4} />
+```

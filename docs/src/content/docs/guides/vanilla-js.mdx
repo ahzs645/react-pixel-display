@@ -1,0 +1,123 @@
+---
+title: Vanilla JS
+draft: false
+description: Use the core rendering engine without React.
+---
+
+The core API is available at `react-pixel-display/core` and works without React.
+
+## Basic setup
+
+```ts
+import {
+  ImageDataLEDRenderer,
+  textToPixels,
+} from 'react-pixel-display/core';
+
+// Create a container
+const container = document.getElementById('display')!;
+
+// Create a renderer
+const renderer = new ImageDataLEDRenderer({
+  width: 64,
+  height: 16,
+  scale: 8,
+  glow: true,
+  pixelGap: 0.15,
+});
+
+renderer.setContainer(container);
+
+// Render text
+const pixels = textToPixels('HELLO', 64, 16, '#ff6600', '#000000');
+renderer.setData(pixels);
+renderer.renderStatic();
+```
+
+## Adding effects
+
+```ts
+import {
+  ImageDataLEDRenderer,
+  textToPixels,
+  textToScrollPixels,
+} from 'react-pixel-display/core';
+
+const container = document.getElementById('display')!;
+const renderer = new ImageDataLEDRenderer({
+  width: 64,
+  height: 16,
+  scale: 8,
+  glow: true,
+});
+renderer.setContainer(container);
+
+// Generate scroll data for the text
+const pixels = textToPixels('SCROLLING TEXT', 64, 16, '#ff6600', '#000000');
+const scrollData = textToScrollPixels('SCROLLING TEXT', 64, 16, '#ff6600', '#000000');
+
+// Feed data and start animation
+renderer.setData(pixels, scrollData.pixels, scrollData.width);
+renderer.setEffect('scroll_rtl', 40);
+renderer.start();
+```
+
+## Using other renderers
+
+```ts
+import {
+  CanvasLEDRenderer,
+  SVGLEDMatrixRenderer,
+} from 'react-pixel-display/core';
+
+// Canvas renderer
+const canvasRenderer = new CanvasLEDRenderer({ width: 64, height: 16 });
+
+// SVG renderer
+const svgRenderer = new SVGLEDMatrixRenderer({ width: 64, height: 16 });
+```
+
+## Ambient effects
+
+Ambient effects don't need text data — just set the effect and start:
+
+```ts
+renderer.setData([], [], 64);
+renderer.setEffect('fire', 50);
+renderer.start();
+```
+
+## Cleanup
+
+Always destroy the renderer when you're done to clean up timers and DOM elements:
+
+```ts
+renderer.stop();
+renderer.destroy();
+```
+
+## Available exports
+
+The `react-pixel-display/core` sub-path exports:
+
+| Export                    | Description                                  |
+| ------------------------ | -------------------------------------------- |
+| `ImageDataLEDRenderer`   | Fastest renderer (Canvas ImageData API)      |
+| `CanvasLEDRenderer`      | Canvas 2D drawing API renderer               |
+| `SVGLEDMatrixRenderer`   | SVG-based renderer                           |
+| `EffectManager`          | Manage effects programmatically              |
+| `EFFECTS`                | Map of all effect metadata                   |
+| `TEXT_EFFECTS`           | Array of text effect names                   |
+| `AMBIENT_EFFECTS`        | Array of ambient effect names                |
+| `COLOR_EFFECTS`          | Array of color effect names                  |
+| `ALL_EFFECTS`            | Array of all effect names                    |
+| `textToPixels`           | Render text to pixel array (legacy font)     |
+| `textToScrollPixels`     | Generate scroll data (legacy font)           |
+| `loadFont`               | Load a TTF web font                          |
+| `textToPixelsCanvas`     | Render text via canvas font                  |
+| `loadBdfFont`            | Load a BDF font file                         |
+| `textToPixelsBdf`        | Render text via BDF font                     |
+| `configureFonts`         | Set font base URL or resolvers               |
+| `hexToRgb`               | Convert hex to `[r, g, b]` tuple             |
+| `hexToRgbObj`            | Convert hex to `{ r, g, b }` object          |
+| `hsvToRgb`               | Convert HSV to `[r, g, b]` tuple             |

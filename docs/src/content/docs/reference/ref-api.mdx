@@ -1,0 +1,115 @@
+---
+title: Ref API
+draft: false
+description: Control the display imperatively via React refs.
+---
+
+The `PixelDisplay` component exposes an imperative API through `React.forwardRef`. Use a ref to control playback and access the underlying renderer.
+
+## Setup
+
+```tsx
+import { useRef } from 'react';
+import { PixelDisplay } from 'react-pixel-display';
+import type { PixelDisplayRef } from 'react-pixel-display';
+
+function Controls() {
+  const displayRef = useRef<PixelDisplayRef>(null);
+
+  return (
+    <>
+      <PixelDisplay
+        ref={displayRef}
+        text="HELLO"
+        effect="scroll_rtl"
+        speed={40}
+      />
+
+      <button onClick={() => displayRef.current?.start()}>
+        Play
+      </button>
+      <button onClick={() => displayRef.current?.stop()}>
+        Pause
+      </button>
+    </>
+  );
+}
+```
+
+## PixelDisplayRef methods
+
+### `start()`
+
+Start (or resume) the animation loop.
+
+```ts
+displayRef.current?.start();
+```
+
+### `stop()`
+
+Pause the animation loop. The display freezes on the current frame.
+
+```ts
+displayRef.current?.stop();
+```
+
+### `isRunning()`
+
+Returns `true` if the animation loop is currently running.
+
+```ts
+if (displayRef.current?.isRunning()) {
+  console.log('Display is animating');
+}
+```
+
+### `getRenderer()`
+
+Returns the underlying `LEDRenderer` instance (or `null` before mount). Use this for advanced operations like reading the pixel buffer directly.
+
+```ts
+const renderer = displayRef.current?.getRenderer();
+if (renderer) {
+  console.log(`Display is ${renderer.width}x${renderer.height}`);
+  console.log('Buffer length:', renderer.buffer.length);
+}
+```
+
+## Full playback control example
+
+```tsx
+import { useRef, useState } from 'react';
+import { PixelDisplay } from 'react-pixel-display';
+import type { PixelDisplayRef } from 'react-pixel-display';
+
+function PlaybackDemo() {
+  const ref = useRef<PixelDisplayRef>(null);
+  const [playing, setPlaying] = useState(true);
+
+  const toggle = () => {
+    if (ref.current?.isRunning()) {
+      ref.current.stop();
+      setPlaying(false);
+    } else {
+      ref.current?.start();
+      setPlaying(true);
+    }
+  };
+
+  return (
+    <div>
+      <PixelDisplay
+        ref={ref}
+        text="PLAY / PAUSE"
+        effect="scroll_rtl"
+        speed={40}
+        foregroundColor="#ff6600"
+      />
+      <button onClick={toggle}>
+        {playing ? 'Pause' : 'Play'}
+      </button>
+    </div>
+  );
+}
+```
