@@ -3,14 +3,14 @@ import starlight from '@astrojs/starlight';
 import react from '@astrojs/react';
 
 export default defineConfig({
-  site: 'https://cagcoach.github.io',
+  site: 'https://projects.ahmadjalil.com',
   base: '/react-pixel-display',
   integrations: [
     starlight({
       title: 'React Pixel Display',
       description: 'LED matrix display simulator for React',
       social: {
-        github: 'https://github.com/cagcoach/react-pixel-display',
+        github: 'https://github.com/ahzs645/react-pixel-display',
       },
       sidebar: [
         {
