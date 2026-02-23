@@ -3,6 +3,8 @@ import starlight from '@astrojs/starlight';
 import react from '@astrojs/react';
 
 export default defineConfig({
+  site: 'https://cagcoach.github.io',
+  base: '/react-pixel-display',
   integrations: [
     starlight({
       title: 'React Pixel Display',
