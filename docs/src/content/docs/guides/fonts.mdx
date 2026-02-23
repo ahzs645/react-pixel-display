@@ -24,9 +24,11 @@ This font supports uppercase and lowercase letters, digits, and common symbols.
 
 Renders text using a TTF web font loaded via CSS `@font-face`. This produces smoother text at larger sizes.
 
+<Demo client:load text="Canvas Font" font="canvas" fontName="VCR_OSD_MONO" width={128} height={32} scale={4} foregroundColor="#00ccff" />
+
 ```tsx
 <PixelDisplay
-  text="Canvas"
+  text="Canvas Font"
   font="canvas"
   fontName="VCR_OSD_MONO"
   width={128}
@@ -58,9 +60,11 @@ If your fonts live at a custom URL, pass a `fontResolver`:
 
 Loads external `.bdf` bitmap font files. BDF fonts render pixel-perfect at their native size.
 
+<Demo client:load text="BDF Font" font="bdf" fontName="VCR_OSD_MONO" width={128} height={32} scale={4} foregroundColor="#ffcc00" />
+
 ```tsx
 <PixelDisplay
-  text="BDF font"
+  text="BDF Font"
   font="bdf"
   fontName="VCR_OSD_MONO"
   width={128}
@@ -101,10 +105,25 @@ Each font is available at 16, 24, and 32 pixel sizes:
 
 The legacy font works best for small displays (height ≤ 16). For larger displays, use `canvas` or `bdf` with a taller height for more detail.
 
+**Legacy** (5x7 bitmap — great for small displays):
+
+<Demo client:load text="Hello World" font="legacy" foregroundColor="#ff6600" />
+
+**Canvas** (TTF — smoother at larger sizes):
+
+<Demo client:load text="Hello World" font="canvas" fontName="VCR_OSD_MONO" width={128} height={32} scale={4} foregroundColor="#00ccff" />
+
+**BDF** (pixel-perfect bitmap):
+
+<Demo client:load text="Hello World" font="bdf" fontName="VCR_OSD_MONO" width={128} height={32} scale={4} foregroundColor="#ffcc00" />
+
 ```tsx
 {/* Small — legacy works great */}
-<PixelDisplay text="Small" font="legacy" width={64} height={16} />
+<PixelDisplay text="Hello World" font="legacy" width={64} height={16} />
 
-{/* Large — use canvas or bdf for sharper rendering */}
-<PixelDisplay text="Large" font="canvas" width={128} height={32} scale={4} />
+{/* Large — use canvas for smoother rendering */}
+<PixelDisplay text="Hello World" font="canvas" width={128} height={32} scale={4} />
+
+{/* Large — use bdf for pixel-perfect rendering */}
+<PixelDisplay text="Hello World" font="bdf" width={128} height={32} scale={4} />
 ```

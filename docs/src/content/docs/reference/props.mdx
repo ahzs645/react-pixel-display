@@ -23,6 +23,8 @@ All props are optional. The component renders a blank display with default value
 | `text`     | `string`     | —            | Text to render on the display                  |
 | `pixels`   | `HexColor[]` | —            | Raw pixel data (overrides `text` when provided)|
 
+<Demo client:load text="Hello!" foregroundColor="#00ff88" />
+
 ### Dimensions
 
 | Prop       | Type     | Default | Description                              |
@@ -32,6 +34,10 @@ All props are optional. The component renders a blank display with default value
 | `scale`    | `number` | `8`     | Visual scale multiplier                  |
 | `pixelGap` | `number` | `0.15`  | Gap between pixels (0 = solid)           |
 
+<Demo client:load text="TINY" width={32} height={10} scale={8} foregroundColor="#ff6600" />
+
+<Demo client:load text="WIDE" width={128} height={16} scale={3} foregroundColor="#00ccff" />
+
 ### Appearance
 
 | Prop              | Type       | Default     | Description                      |
@@ -40,12 +46,18 @@ All props are optional. The component renders a blank display with default value
 | `backgroundColor`  | `HexColor` | `'#111'`    | Background color                 |
 | `glow`            | `boolean`  | `true`      | Enable LED glow bloom            |
 
+<Demo client:load text="GLOW" foregroundColor="#ff00ff" backgroundColor="#1a001a" glow={true} />
+
+<Demo client:load text="NO GLOW" foregroundColor="#ff00ff" backgroundColor="#1a001a" glow={false} />
+
 ### Effects
 
 | Prop     | Type         | Default   | Description                |
 | -------- | ------------ | --------- | -------------------------- |
 | `effect` | `EffectName` | `'fixed'` | Animation effect name      |
 | `speed`  | `number`     | `50`      | Animation speed            |
+
+<Demo client:load text="BREEZE" effect="breeze" speed={40} foregroundColor="#00ff88" />
 
 See the [Effects guide](/guides/effects/) for all 24 effect names and live demos.
 
@@ -57,6 +69,8 @@ See the [Effects guide](/guides/effects/) for all 24 effect names and live demos
 | `fontName`     | `string`       | `'VCR_OSD_MONO'` | Font name for canvas/BDF          |
 | `fontResolver` | `FontResolver` | —                | Custom URL resolver for font files|
 
+<Demo client:load text="LEGACY" font="legacy" foregroundColor="#ff6600" />
+
 See the [Fonts guide](/guides/fonts/) for details on each font system.
 
 ### Renderer
@@ -64,6 +78,8 @@ See the [Fonts guide](/guides/fonts/) for details on each font system.
 | Prop       | Type           | Default       | Description                                |
 | ---------- | -------------- | ------------- | ------------------------------------------ |
 | `renderer` | `RendererType` | `'imagedata'` | Backend: `'imagedata'` \| `'canvas'` \| `'svg'` |
+
+<Demo client:load text="SVG" renderer="svg" foregroundColor="#00ff88" />
 
 See the [Renderers guide](/guides/renderers/) for a comparison.
 

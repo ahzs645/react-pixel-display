@@ -1,0 +1,294 @@
+---
+title: Examples
+draft: false
+description: Practical recipes and interactive examples for common use cases.
+---
+
+import Demo from '../../../components/Demo.tsx';
+import NotificationDemo from '../../../components/NotificationDemo.tsx';
+import ScoreboardDemo from '../../../components/ScoreboardDemo.tsx';
+import EffectSwitcherDemo from '../../../components/EffectSwitcherDemo.tsx';
+import MultiDisplayDemo from '../../../components/MultiDisplayDemo.tsx';
+import ColorPaletteDemo from '../../../components/ColorPaletteDemo.tsx';
+import CheckerboardDemo from '../../../components/CheckerboardDemo.tsx';
+import GradientDemo from '../../../components/GradientDemo.tsx';
+import PixelArtDemo from '../../../components/PixelArtDemo.tsx';
+import PlaybackDemo from '../../../components/PlaybackDemo.tsx';
+
+A collection of practical examples showing what you can build with React Pixel Display.
+
+---
+
+## Notification ticker
+
+Use different colors and effects to distinguish notification severity:
+
+<NotificationDemo client:load type="info" />
+
+<NotificationDemo client:load type="success" />
+
+<NotificationDemo client:load type="warning" />
+
+<NotificationDemo client:load type="error" />
+
+```tsx
+// Info — scrolling cyan
+<PixelDisplay text="INFO: System online" effect="scroll_rtl" speed={35}
+  foregroundColor="#00ccff" width={96} height={16} scale={4} glow />
+
+// Success — gentle breeze in green
+<PixelDisplay text="OK: Deploy complete" effect="breeze" speed={35}
+  foregroundColor="#00ff66" width={96} height={16} scale={4} glow />
+
+// Warning — blinking amber
+<PixelDisplay text="WARN: Disk 90%" effect="blink" speed={35}
+  foregroundColor="#ffcc00" width={96} height={16} scale={4} glow />
+
+// Error — blinking red
+<PixelDisplay text="ERR: Connection lost" effect="blink" speed={35}
+  foregroundColor="#ff0033" width={96} height={16} scale={4} glow />
+```
+
+---
+
+## Interactive scoreboard
+
+The `text` prop is reactive — update it with state to build dynamic displays:
+
+<ScoreboardDemo client:load />
+
+```tsx
+import { useState } from 'react';
+import { PixelDisplay } from 'react-pixel-display';
+
+function Scoreboard() {
+  const [home, setHome] = useState(0);
+  const [away, setAway] = useState(0);
+  const text = `${String(home).padStart(2, '0')} - ${String(away).padStart(2, '0')}`;
+
+  return (
+    <div>
+      <PixelDisplay text={text} foregroundColor="#ffcc00" width={64} height={16} scale={6} glow />
+      <button onClick={() => setHome(h => h + 1)}>Home +1</button>
+      <button onClick={() => setAway(a => a + 1)}>Away +1</button>
+      <button onClick={() => { setHome(0); setAway(0); }}>Reset</button>
+    </div>
+  );
+}
+```
+
+---
+
+## Effect switcher
+
+Switch effects at runtime by changing the `effect` prop:
+
+<EffectSwitcherDemo client:load />
+
+```tsx
+import { useState } from 'react';
+import { PixelDisplay } from 'react-pixel-display';
+import type { EffectName } from 'react-pixel-display';
+
+function EffectSwitcher() {
+  const [effect, setEffect] = useState<EffectName>('scroll_rtl');
+
+  return (
+    <div>
+      <PixelDisplay text="SWITCH EFFECTS" effect={effect} speed={40}
+        foregroundColor="#ff6600" width={96} height={16} scale={5} glow />
+      <button onClick={() => setEffect('scroll_rtl')}>Scroll</button>
+      <button onClick={() => setEffect('breeze')}>Breeze</button>
+      <button onClick={() => setEffect('rainbow_text')}>Rainbow</button>
+      <button onClick={() => setEffect('neon')}>Neon</button>
+    </div>
+  );
+}
+```
+
+---
+
+## Playback control
+
+Use the ref API to build play/pause controls:
+
+<PlaybackDemo client:load />
+
+```tsx
+import { useRef, useState } from 'react';
+import { PixelDisplay } from 'react-pixel-display';
+import type { PixelDisplayRef } from 'react-pixel-display';
+
+function PlaybackControl() {
+  const ref = useRef<PixelDisplayRef>(null);
+  const [playing, setPlaying] = useState(true);
+
+  const toggle = () => {
+    if (ref.current?.isRunning()) {
+      ref.current.stop();
+      setPlaying(false);
+    } else {
+      ref.current?.start();
+      setPlaying(true);
+    }
+  };
+
+  return (
+    <div>
+      <PixelDisplay ref={ref} text="PLAY / PAUSE ME"
+        effect="scroll_rtl" speed={40} foregroundColor="#ff6600"
+        width={64} height={16} scale={6} glow />
+      <button onClick={toggle}>{playing ? 'Pause' : 'Play'}</button>
+    </div>
+  );
+}
+```
+
+---
+
+## Status dashboard
+
+Arrange multiple displays to build a monitoring dashboard:
+
+<MultiDisplayDemo client:load />
+
+```tsx
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+  <PixelDisplay text="CPU 42%" foregroundColor="#00ff88" width={64} height={12} scale={4} glow />
+  <PixelDisplay text="MEM 78%" foregroundColor="#ffcc00" width={64} height={12} scale={4} glow />
+  <PixelDisplay text="DISK OK" foregroundColor="#00ccff" width={64} height={12} scale={4} glow />
+  <PixelDisplay text="NET ERR" effect="blink" speed={30}
+    foregroundColor="#ff0033" width={64} height={12} scale={4} glow />
+</div>
+```
+
+---
+
+## Custom pixel patterns
+
+### Checkerboard
+
+<CheckerboardDemo client:load />
+
+```tsx
+const size = 16;
+const pixels: string[] = [];
+for (let y = 0; y < size; y++) {
+  for (let x = 0; x < size; x++) {
+    pixels.push((x + y) % 2 === 0 ? '#ff6600' : '#000000');
+  }
+}
+
+<PixelDisplay pixels={pixels} width={size} height={size} scale={8} glow />
+```
+
+### Color gradient
+
+<GradientDemo client:load />
+
+```tsx
+const width = 32, height = 16;
+const pixels: string[] = [];
+for (let y = 0; y < height; y++) {
+  for (let x = 0; x < width; x++) {
+    const t = x / (width - 1);
+    const r = Math.round(255 * (1 - t));
+    const b = Math.round(255 * t);
+    pixels.push(`#${r.toString(16).padStart(2, '0')}00${b.toString(16).padStart(2, '0')}`);
+  }
+}
+
+<PixelDisplay pixels={pixels} width={width} height={height} scale={6} glow />
+```
+
+### Pixel art
+
+<PixelArtDemo client:load />
+
+<PixelArtDemo client:load color="#00ccff" />
+
+<PixelArtDemo client:load color="#00ff88" />
+
+```tsx
+const HEART = [
+  [0,0,1,1,0,0,1,1,0,0],
+  [0,1,1,1,1,1,1,1,1,0],
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,1,1,1,1,1,1,1,1,1],
+  [0,1,1,1,1,1,1,1,1,0],
+  [0,0,1,1,1,1,1,1,0,0],
+  [0,0,0,1,1,1,1,0,0,0],
+  [0,0,0,0,1,1,0,0,0,0],
+];
+
+const pixels = HEART.flat().map(v => v ? '#ff0044' : '#111111');
+
+<PixelDisplay pixels={pixels} width={10} height={9} scale={10} glow />
+```
+
+---
+
+## Color palette
+
+Visualise the full hue spectrum using per-pixel color computation:
+
+<ColorPaletteDemo client:load />
+
+```tsx
+const width = 48, height = 12;
+const pixels: string[] = [];
+
+for (let y = 0; y < height; y++) {
+  for (let x = 0; x < width; x++) {
+    const hue = (x / width) * 360;
+    // Convert HSL to hex ...
+    pixels.push(hslToHex(hue, 1, 0.5));
+  }
+}
+
+<PixelDisplay pixels={pixels} width={width} height={height} scale={6} glow pixelGap={0.1} />
+```
+
+---
+
+## Ambient backgrounds
+
+These effects fill the entire display without needing any text:
+
+<Demo client:load effect="aurora" speed={50} />
+
+<Demo client:load effect="plasma" speed={50} />
+
+<Demo client:load effect="lava" speed={50} />
+
+<Demo client:load effect="stars" speed={50} />
+
+```tsx
+<PixelDisplay effect="aurora" width={64} height={16} scale={6} glow />
+<PixelDisplay effect="plasma" width={64} height={16} scale={6} glow />
+<PixelDisplay effect="lava" width={64} height={16} scale={6} glow />
+<PixelDisplay effect="stars" width={64} height={16} scale={6} glow />
+```
+
+---
+
+## Color and text combinations
+
+Mix text content with color effects:
+
+<Demo client:load text="WELCOME" effect="rainbow_text" speed={40} foregroundColor="#ff6600" />
+
+<Demo client:load text="ALERT" effect="neon" speed={50} foregroundColor="#ff0066" />
+
+<Demo client:load text="RETRO GAMING" effect="color_cycle" speed={50} width={96} height={16} scale={4} />
+
+<Demo client:load text="BREAKING NEWS" effect="scroll_rtl" speed={60} foregroundColor="#ff0000" width={96} height={16} scale={4} />
+
+```tsx
+<PixelDisplay text="WELCOME" effect="rainbow_text" speed={40} glow />
+<PixelDisplay text="ALERT" effect="neon" speed={50} foregroundColor="#ff0066" glow />
+<PixelDisplay text="RETRO GAMING" effect="color_cycle" speed={50} width={96} height={16} scale={4} glow />
+<PixelDisplay text="BREAKING NEWS" effect="scroll_rtl" speed={60}
+  foregroundColor="#ff0000" width={96} height={16} scale={4} glow />
+```

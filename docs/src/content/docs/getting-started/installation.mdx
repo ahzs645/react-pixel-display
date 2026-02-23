@@ -4,6 +4,8 @@ draft: false
 description: How to install react-pixel-display in your project.
 ---
 
+import Demo from '../../../components/Demo.tsx';
+
 ## Install the package
 
 ```bash
@@ -39,6 +41,8 @@ import {
 
 Drop this into any React component to confirm everything is wired up:
 
+<Demo client:load text="HELLO" foregroundColor="#00ff88" />
+
 ```tsx
 import { PixelDisplay } from 'react-pixel-display';
 
@@ -55,7 +59,7 @@ export default function App() {
 }
 ```
 
-You should see a glowing green LED display showing **HELLO**.
+You should see a glowing green LED display like the one above.
 
 ## Using in Astro / MDX
 
