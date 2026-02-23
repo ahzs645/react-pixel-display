@@ -5,6 +5,8 @@ description: An LED matrix display simulator for React and vanilla JavaScript.
 ---
 
 import Demo from '../../../components/Demo.tsx';
+import PixelArtDemo from '../../../components/PixelArtDemo.tsx';
+import ColorPaletteDemo from '../../../components/ColorPaletteDemo.tsx';
 
 **React Pixel Display** is a high-performance LED matrix display simulator that renders text, effects, and custom pixel data in the browser.
 
@@ -38,5 +40,23 @@ import { PixelDisplay } from 'react-pixel-display';
   foregroundColor="#ff6600"
 />
 ```
+
+### Effects
+
+Choose from 24 built-in effects — text animations, ambient backgrounds, and color transformations:
+
+<Demo client:load effect="fire" speed={50} />
+
+<Demo client:load effect="matrix" speed={50} />
+
+<Demo client:load text="RAINBOW" effect="rainbow_text" speed={50} />
+
+### Custom pixel data
+
+Render any pattern you want by passing raw pixel arrays:
+
+<PixelArtDemo client:load />
+
+<ColorPaletteDemo client:load />
 
 Ready to get started? Head to the [Installation](/getting-started/installation/) page.

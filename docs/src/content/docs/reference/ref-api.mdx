@@ -4,7 +4,13 @@ draft: false
 description: Control the display imperatively via React refs.
 ---
 
+import PlaybackDemo from '../../../components/PlaybackDemo.tsx';
+
 The `PixelDisplay` component exposes an imperative API through `React.forwardRef`. Use a ref to control playback and access the underlying renderer.
+
+Try clicking the button below to pause and resume the animation:
+
+<PlaybackDemo client:load />
 
 ## Setup
 
@@ -78,6 +84,8 @@ if (renderer) {
 
 ## Full playback control example
 
+The interactive demo at the top of this page uses the code below. Click the button to toggle between play and pause:
+
 ```tsx
 import { useRef, useState } from 'react';
 import { PixelDisplay } from 'react-pixel-display';
@@ -101,7 +109,7 @@ function PlaybackDemo() {
     <div>
       <PixelDisplay
         ref={ref}
-        text="PLAY / PAUSE"
+        text="PLAY / PAUSE ME"
         effect="scroll_rtl"
         speed={40}
         foregroundColor="#ff6600"
