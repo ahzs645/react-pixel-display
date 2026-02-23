@@ -83,7 +83,7 @@ export class CanvasLEDRenderer {
       this._glowCanvas.style.cssText = `
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         filter: blur(${this.scale * 0.8}px); opacity: 0.6;
-        image-rendering: pixelated;
+        image-rendering: pixelated; margin: 0;
       `;
       this._glowCtx = this._glowCanvas.getContext('2d', { alpha: false });
       this._wrapper.appendChild(this._glowCanvas);
@@ -94,7 +94,7 @@ export class CanvasLEDRenderer {
     this._canvas.height = canvasHeight;
     this._canvas.style.cssText = `
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      image-rendering: pixelated; image-rendering: crisp-edges;
+      image-rendering: pixelated; image-rendering: crisp-edges; margin: 0;
     `;
     this._ctx = this._canvas.getContext('2d', { alpha: false });
     if (this._ctx) this._ctx.imageSmoothingEnabled = false;
