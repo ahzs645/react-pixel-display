@@ -14,7 +14,9 @@ export class TextEffects {
     switch (effectName) {
       case 'scroll_ltr':
       case 'scroll_rtl':
-        state.offset = 0;
+        // Start at the beginning of the text region instead of the leading blank padding.
+        // This avoids long "empty" periods before the first glyph enters view.
+        state.offset = -width;
         break;
       case 'blink':
         state.visible = true;
