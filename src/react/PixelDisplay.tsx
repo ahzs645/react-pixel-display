@@ -114,6 +114,8 @@ export const PixelDisplay = forwardRef<PixelDisplayRef, PixelDisplayProps>(
           background: '#0a0a0a',
           borderRadius: '4px',
           overflow: 'hidden',
+          width: width * scale,
+          aspectRatio: `${width} / ${height}`,
           ...style,
         }}
       />
