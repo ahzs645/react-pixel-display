@@ -109,7 +109,6 @@ export const PixelDisplay = forwardRef<PixelDisplayRef, PixelDisplayProps>(
         ref={containerRef}
         className={className}
         style={{
-          width: `${width * scale}px`,
           maxWidth: '100%',
           background: '#0a0a0a',
           borderRadius: '4px',
