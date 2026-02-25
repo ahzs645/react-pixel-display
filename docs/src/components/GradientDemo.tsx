@@ -36,7 +36,7 @@ export default function GradientDemo({
   }, [width, height]);
 
   return (
-    <div style={{ margin: '1.5rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block' }}>
+    <div style={{ margin: '1.5rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block', maxWidth: '100%' }}>
       <PixelDisplay pixels={pixels} width={width} height={height} scale={scale} glow />
     </div>
   );

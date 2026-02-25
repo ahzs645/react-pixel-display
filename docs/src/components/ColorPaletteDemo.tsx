@@ -41,7 +41,7 @@ export default function ColorPaletteDemo() {
   }, []);
 
   return (
-    <div style={{ margin: '1.5rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block' }}>
+    <div style={{ margin: '1.5rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block', maxWidth: '100%' }}>
       <PixelDisplay pixels={pixels} width={width} height={height} scale={6} glow pixelGap={0.1} />
     </div>
   );
