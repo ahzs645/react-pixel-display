@@ -69,7 +69,13 @@ export const PixelDisplay = forwardRef<PixelDisplayRef, PixelDisplayProps>(
           setData(textPixels);
         }
       }
-    }, [propPixels, textPixels, scrollData, isAmbient, needsScroll, width, setData, rendererRef]);
+
+      // For fixed effect, re-render immediately after data changes
+      // (animated effects handle this via their animation loop)
+      if (effect === 'fixed') {
+        renderStatic();
+      }
+    }, [propPixels, textPixels, scrollData, isAmbient, needsScroll, width, setData, rendererRef, effect, renderStatic]);
 
     // Update effect
     useEffect(() => {
