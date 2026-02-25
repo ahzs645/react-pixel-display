@@ -6,7 +6,7 @@ import { PixelDisplay } from 'react-pixel-display';
 export default function MultiDisplayDemo() {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', margin: '1.5rem 0' }}>
-      <div style={{ borderRadius: '6px', overflow: 'hidden' }}>
+      <div style={{ borderRadius: '6px', overflow: 'hidden', maxWidth: '100%' }}>
         <PixelDisplay
           text="CPU 42%"
           foregroundColor="#00ff88"
@@ -16,7 +16,7 @@ export default function MultiDisplayDemo() {
           glow
         />
       </div>
-      <div style={{ borderRadius: '6px', overflow: 'hidden' }}>
+      <div style={{ borderRadius: '6px', overflow: 'hidden', maxWidth: '100%' }}>
         <PixelDisplay
           text="MEM 78%"
           foregroundColor="#ffcc00"
@@ -26,7 +26,7 @@ export default function MultiDisplayDemo() {
           glow
         />
       </div>
-      <div style={{ borderRadius: '6px', overflow: 'hidden' }}>
+      <div style={{ borderRadius: '6px', overflow: 'hidden', maxWidth: '100%' }}>
         <PixelDisplay
           text="DISK OK"
           foregroundColor="#00ccff"
@@ -36,7 +36,7 @@ export default function MultiDisplayDemo() {
           glow
         />
       </div>
-      <div style={{ borderRadius: '6px', overflow: 'hidden' }}>
+      <div style={{ borderRadius: '6px', overflow: 'hidden', maxWidth: '100%' }}>
         <PixelDisplay
           text="NET ERR"
           effect="blink"

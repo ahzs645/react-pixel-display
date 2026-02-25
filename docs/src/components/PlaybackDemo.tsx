@@ -32,7 +32,7 @@ export default function PlaybackDemo() {
 
   return (
     <div style={{ margin: '1.5rem 0' }}>
-      <div style={{ borderRadius: '8px', overflow: 'hidden', display: 'inline-block' }}>
+      <div style={{ borderRadius: '8px', overflow: 'hidden', display: 'inline-block', maxWidth: '100%' }}>
         <PixelDisplay
           ref={ref}
           text="PLAY / PAUSE ME"

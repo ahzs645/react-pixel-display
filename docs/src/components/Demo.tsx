@@ -7,7 +7,7 @@ import type { PixelDisplayProps } from 'react-pixel-display';
  */
 export default function Demo(props: PixelDisplayProps) {
   return (
-    <div style={{ margin: '1.5rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block' }}>
+    <div style={{ margin: '1.5rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block', maxWidth: '100%' }}>
       <PixelDisplay
         width={64}
         height={16}

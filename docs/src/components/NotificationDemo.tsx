@@ -20,7 +20,7 @@ export default function NotificationDemo({ type = 'info' }: Props) {
   const { text, color, effect } = config[type] ?? config.info;
 
   return (
-    <div style={{ margin: '1rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block' }}>
+    <div style={{ margin: '1rem 0', borderRadius: '8px', overflow: 'hidden', display: 'inline-block', maxWidth: '100%' }}>
       <PixelDisplay
         text={text}
         effect={effect}
