@@ -48,15 +48,16 @@ export default function LiveExample({ children, code }: Props) {
 
   const toggleBtnStyle = (active: boolean): React.CSSProperties => ({
     flex: 1,
-    padding: '4px 14px',
+    padding: '6px 18px',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '6px',
     background: 'transparent',
-    color: active ? '#e0e0e0' : '#666',
+    color: active ? '#f0f0f0' : '#777',
     cursor: 'pointer',
-    fontSize: '12.5px',
-    fontFamily: 'system-ui, sans-serif',
+    fontSize: '13px',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
     fontWeight: active ? 600 : 400,
+    letterSpacing: '0.02em',
     position: 'relative',
     zIndex: 1,
     transition: 'color 0.2s ease',
@@ -89,25 +90,25 @@ export default function LiveExample({ children, code }: Props) {
             style={{
               display: 'flex',
               background: '#0a0a1e',
-              borderRadius: '7px',
-              padding: '2px',
+              borderRadius: '8px',
+              padding: '3px',
               position: 'relative',
-              border: '1px solid #2a2a40',
+              border: '1px solid #2a2a4a',
             }}
           >
             {/* Sliding pill indicator */}
             <div
               style={{
                 position: 'absolute',
-                top: '2px',
-                left: '2px',
-                width: 'calc(50% - 2px)',
-                height: 'calc(100% - 4px)',
-                background: '#2d2d5e',
-                borderRadius: '5px',
+                top: '3px',
+                left: '3px',
+                width: 'calc(50% - 3px)',
+                height: 'calc(100% - 6px)',
+                background: 'linear-gradient(135deg, #3a3a6e, #2d2d5e)',
+                borderRadius: '6px',
                 transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                 transform: isPreview ? 'translateX(0)' : 'translateX(100%)',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                boxShadow: '0 1px 6px rgba(45,45,94,0.5)',
               }}
             />
             <button onClick={() => setView('preview')} style={toggleBtnStyle(isPreview)}>
@@ -122,14 +123,15 @@ export default function LiveExample({ children, code }: Props) {
           <button
             onClick={handleCopy}
             style={{
-              padding: '4px 10px',
-              border: '1px solid #2a2a40',
+              padding: '6px 14px',
+              border: '1px solid #2a2a4a',
               borderRadius: '6px',
               background: copied ? '#1a3a1a' : '#0a0a1e',
-              color: copied ? '#4ade80' : '#888',
+              color: copied ? '#4ade80' : '#999',
               cursor: 'pointer',
-              fontSize: '12px',
-              fontFamily: 'system-ui, sans-serif',
+              fontSize: '12.5px',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              fontWeight: 500,
               opacity: !isPreview ? 1 : 0,
               pointerEvents: !isPreview ? 'auto' : 'none',
               transition: 'opacity 0.2s ease, background 0.15s ease, color 0.15s ease',
