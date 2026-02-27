@@ -54,6 +54,55 @@ export class TextEffects {
           });
         }
         break;
+
+      // Parola-inspired transition effects
+      case 'scroll_up':
+        state.yOffset = -height;
+        break;
+      case 'scroll_down':
+        state.yOffset = height;
+        break;
+      case 'dissolve': {
+        // Create a random threshold for each pixel to control reveal order
+        const thresholds: number[] = [];
+        for (let i = 0; i < width * height; i++) {
+          thresholds.push(Math.random());
+        }
+        state.thresholds = thresholds;
+        state.progress = 0;
+        state.direction = 1;
+        break;
+      }
+      case 'blinds':
+        state.progress = 0;
+        state.direction = 1;
+        break;
+      case 'wipe':
+        state.wipeX = -1;
+        state.direction = 1;
+        break;
+      case 'scan_horiz':
+        state.scanX = -1;
+        state.revealed = false;
+        state.direction = 1;
+        break;
+      case 'scan_vert':
+        state.scanY = -1;
+        state.revealed = false;
+        state.direction = 1;
+        break;
+      case 'grow_up':
+        state.rows = 0;
+        state.direction = 1;
+        break;
+      case 'grow_down':
+        state.rows = 0;
+        state.direction = 1;
+        break;
+      case 'opening':
+        state.halfWidth = 0;
+        state.direction = 1;
+        break;
     }
   }
 
@@ -119,6 +168,106 @@ export class TextEffects {
         }
         break;
       }
+
+      // Parola-inspired transition effects
+      case 'scroll_up':
+        (state.yOffset as number) += 1;
+        if ((state.yOffset as number) > this.renderer.height) {
+          state.yOffset = -this.renderer.height;
+        }
+        break;
+      case 'scroll_down':
+        (state.yOffset as number) -= 1;
+        if ((state.yOffset as number) < -this.renderer.height) {
+          state.yOffset = this.renderer.height;
+        }
+        break;
+      case 'dissolve':
+        (state.progress as number) += (state.direction as number) * 0.02;
+        if ((state.progress as number) >= 1) {
+          state.progress = 1;
+          state.direction = -1;
+        } else if ((state.progress as number) <= 0) {
+          state.progress = 0;
+          state.direction = 1;
+        }
+        break;
+      case 'blinds':
+        (state.progress as number) += (state.direction as number) * 0.03;
+        if ((state.progress as number) >= 1) {
+          state.progress = 1;
+          state.direction = -1;
+        } else if ((state.progress as number) <= 0) {
+          state.progress = 0;
+          state.direction = 1;
+        }
+        break;
+      case 'wipe':
+        (state.wipeX as number) += (state.direction as number);
+        if ((state.wipeX as number) >= width + 2) {
+          state.direction = -1;
+        } else if ((state.wipeX as number) <= -3) {
+          state.direction = 1;
+        }
+        break;
+      case 'scan_horiz':
+        (state.scanX as number) += (state.direction as number);
+        if ((state.scanX as number) >= width) {
+          state.revealed = !(state.revealed as boolean);
+          state.direction = -1;
+          state.scanX = width - 1;
+        } else if ((state.scanX as number) < 0) {
+          state.revealed = !(state.revealed as boolean);
+          state.direction = 1;
+          state.scanX = 0;
+        }
+        break;
+      case 'scan_vert': {
+        const h = this.renderer.height;
+        (state.scanY as number) += (state.direction as number);
+        if ((state.scanY as number) >= h) {
+          state.revealed = !(state.revealed as boolean);
+          state.direction = -1;
+          state.scanY = h - 1;
+        } else if ((state.scanY as number) < 0) {
+          state.revealed = !(state.revealed as boolean);
+          state.direction = 1;
+          state.scanY = 0;
+        }
+        break;
+      }
+      case 'grow_up':
+        (state.rows as number) += (state.direction as number);
+        if ((state.rows as number) >= this.renderer.height) {
+          state.rows = this.renderer.height;
+          state.direction = -1;
+        } else if ((state.rows as number) <= 0) {
+          state.rows = 0;
+          state.direction = 1;
+        }
+        break;
+      case 'grow_down':
+        (state.rows as number) += (state.direction as number);
+        if ((state.rows as number) >= this.renderer.height) {
+          state.rows = this.renderer.height;
+          state.direction = -1;
+        } else if ((state.rows as number) <= 0) {
+          state.rows = 0;
+          state.direction = 1;
+        }
+        break;
+      case 'opening': {
+        const halfMax = Math.ceil(width / 2);
+        (state.halfWidth as number) += (state.direction as number);
+        if ((state.halfWidth as number) >= halfMax) {
+          state.halfWidth = halfMax;
+          state.direction = -1;
+        } else if ((state.halfWidth as number) <= 0) {
+          state.halfWidth = 0;
+          state.direction = 1;
+        }
+        break;
+      }
     }
   }
 
@@ -151,6 +300,100 @@ export class TextEffects {
             color = displayPixels[y * width + x] || '#111';
           } else if (x === maxX && state.cursorVisible) {
             color = '#ffffff';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'scroll_up' || effectName === 'scroll_down') {
+          const sourceY = y + ((state.yOffset as number) || 0);
+          if (sourceY >= 0 && sourceY < height) {
+            color = displayPixels[sourceY * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'dissolve') {
+          const thresholds = state.thresholds as number[];
+          const progress = (state.progress as number) || 0;
+          const idx = y * width + x;
+          if (thresholds[idx] < progress) {
+            color = displayPixels[idx] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'blinds') {
+          const progress = (state.progress as number) || 0;
+          const blindWidth = 4;
+          const posInBlind = x % blindWidth;
+          const revealedCols = Math.floor(progress * blindWidth);
+          if (posInBlind < revealedCols) {
+            color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'wipe') {
+          const wipeX = (state.wipeX as number) || 0;
+          const dir = (state.direction as number) || 1;
+          if (dir > 0) {
+            // Wiping right: reveal pixels left of wipeX
+            if (x <= wipeX) {
+              color = displayPixels[y * width + x] || '#111';
+            } else if (x === wipeX + 1 || x === wipeX + 2) {
+              color = '#ffffff'; // cursor bar
+            } else {
+              color = '#111';
+            }
+          } else {
+            // Wiping left: hide pixels right of wipeX
+            if (x < wipeX) {
+              color = displayPixels[y * width + x] || '#111';
+            } else if (x === wipeX || x === wipeX + 1) {
+              color = '#ffffff'; // cursor bar
+            } else {
+              color = '#111';
+            }
+          }
+        } else if (effectName === 'scan_horiz') {
+          const scanX = (state.scanX as number) || 0;
+          const revealed = (state.revealed as boolean) || false;
+          const dir = (state.direction as number) || 1;
+          const isRevealed = dir > 0 ? (revealed ? true : x <= scanX) : (revealed ? x <= scanX : true);
+          if (x === scanX) {
+            color = '#ffffff'; // bright scan line
+          } else if (isRevealed) {
+            color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'scan_vert') {
+          const scanY = (state.scanY as number) || 0;
+          const revealed = (state.revealed as boolean) || false;
+          const dir = (state.direction as number) || 1;
+          const isRevealed = dir > 0 ? (revealed ? true : y <= scanY) : (revealed ? y <= scanY : true);
+          if (y === scanY) {
+            color = '#ffffff'; // bright scan line
+          } else if (isRevealed) {
+            color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'grow_up') {
+          const rows = (state.rows as number) || 0;
+          if (y >= height - rows) {
+            color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'grow_down') {
+          const rows = (state.rows as number) || 0;
+          if (y < rows) {
+            color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'opening') {
+          const halfWidth = (state.halfWidth as number) || 0;
+          const center = Math.floor(width / 2);
+          if (x >= center - halfWidth && x <= center + halfWidth) {
+            color = displayPixels[y * width + x] || '#111';
           } else {
             color = '#111';
           }

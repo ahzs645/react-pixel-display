@@ -83,6 +83,84 @@ export class AmbientEffects {
           (state.noise as number[]).push(Math.random() * Math.PI * 2);
         }
         break;
+
+      // HUB75-inspired panel effects
+      case 'starfield': {
+        const stars: Array<{ x: number; y: number; z: number; pz: number }> = [];
+        for (let i = 0; i < 40; i++) {
+          stars.push({
+            x: (Math.random() - 0.5) * width * 4,
+            y: (Math.random() - 0.5) * height * 4,
+            z: Math.random() * width * 2,
+            pz: 0,
+          });
+        }
+        state.stars3d = stars;
+        break;
+      }
+      case 'fireworks': {
+        state.rockets = [];
+        state.particles = [];
+        state.spawnTimer = 0;
+        break;
+      }
+      case 'rain_storm': {
+        state.drops = [];
+        for (let i = 0; i < 30; i++) {
+          (state.drops as Array<{ x: number; y: number; speed: number; brightness: number; length: number }>).push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            speed: 0.3 + Math.random() * 0.5,
+            brightness: 0.3 + Math.random() * 0.7,
+            length: 2 + Math.floor(Math.random() * 3),
+          });
+        }
+        state.lightning = 0;
+        state.time = 0;
+        break;
+      }
+      case 'munch':
+        state.counter = 0;
+        state.direction = 1;
+        state.time = 0;
+        break;
+      case 'bouncing': {
+        const balls: Array<{ x: number; y: number; vx: number; vy: number; color: RGBColor }> = [];
+        const ballColors: RGBColor[] = [
+          [255, 60, 60], [60, 255, 60], [60, 60, 255],
+          [255, 255, 60], [255, 60, 255], [60, 255, 255],
+        ];
+        for (let i = 0; i < 6; i++) {
+          balls.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: (Math.random() - 0.5) * 1.5,
+            color: ballColors[i],
+          });
+        }
+        state.balls = balls;
+        state.trailBuffer = [];
+        for (let i = 0; i < width * height; i++) {
+          (state.trailBuffer as RGBColor[]).push([0, 0, 0]);
+        }
+        break;
+      }
+      case 'flow_field':
+        state.time = 0;
+        state.flowParticles = [];
+        for (let i = 0; i < 50; i++) {
+          (state.flowParticles as Array<{ x: number; y: number; hue: number }>).push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            hue: Math.random(),
+          });
+        }
+        state.trailBuffer = [];
+        for (let i = 0; i < width * height; i++) {
+          (state.trailBuffer as RGBColor[]).push([0, 0, 0]);
+        }
+        break;
     }
   }
 
@@ -136,6 +214,36 @@ export class AmbientEffects {
       case 'aurora':
         state.time = ((state.time as number) || 0) + 0.03;
         break;
+
+      // HUB75-inspired panel effects
+      case 'starfield':
+        this._stepStarfield(state, width, height);
+        break;
+      case 'fireworks':
+        this._stepFireworks(state, width, height);
+        break;
+      case 'rain_storm':
+        this._stepRainStorm(state, width, height);
+        break;
+      case 'munch':
+        state.time = ((state.time as number) || 0) + 1;
+        if ((state.time as number) % 2 === 0) {
+          (state.counter as number) += (state.direction as number);
+          if ((state.counter as number) >= width) {
+            state.direction = -1;
+            state.counter = width - 1;
+          } else if ((state.counter as number) < 0) {
+            state.direction = 1;
+            state.counter = 0;
+          }
+        }
+        break;
+      case 'bouncing':
+        this._stepBouncing(state, width, height);
+        break;
+      case 'flow_field':
+        this._stepFlowField(state, width, height);
+        break;
     }
   }
 
@@ -154,6 +262,13 @@ export class AmbientEffects {
       case 'hypnotic': this._renderHypnotic(state); break;
       case 'lava': this._renderLava(state); break;
       case 'aurora': this._renderAurora(state); break;
+      // HUB75-inspired panel effects
+      case 'starfield': this._renderStarfield(state); break;
+      case 'fireworks': this._renderFireworks(state); break;
+      case 'rain_storm': this._renderRainStorm(state); break;
+      case 'munch': this._renderMunch(state); break;
+      case 'bouncing': this._renderBouncing(state); break;
+      case 'flow_field': this._renderFlowField(state); break;
     }
   }
 
@@ -564,6 +679,313 @@ export class AmbientEffects {
           b = Math.max(b, starBright * 0.9);
         }
 
+        this.renderer.setPixel(x, y, [r, g, b]);
+      }
+    }
+  }
+
+  // =============================================
+  // HUB75-inspired panel effects
+  // =============================================
+
+  private _stepStarfield(state: EffectState, _width: number, _height: number): void {
+    const stars = state.stars3d as Array<{ x: number; y: number; z: number; pz: number }>;
+    for (const star of stars) {
+      star.pz = star.z;
+      star.z -= 0.8;
+      if (star.z <= 0) {
+        star.x = (Math.random() - 0.5) * _width * 4;
+        star.y = (Math.random() - 0.5) * _height * 4;
+        star.z = _width * 2;
+        star.pz = star.z;
+      }
+    }
+  }
+
+  private _renderStarfield(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const stars = state.stars3d as Array<{ x: number; y: number; z: number; pz: number }>;
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        this.renderer.setPixel(x, y, [2, 2, 8]);
+      }
+    }
+
+    const cx = width / 2;
+    const cy = height / 2;
+
+    for (const star of stars) {
+      const sx = Math.floor((star.x / star.z) * width * 0.3 + cx);
+      const sy = Math.floor((star.y / star.z) * height * 0.3 + cy);
+
+      if (sx >= 0 && sx < width && sy >= 0 && sy < height) {
+        const brightness = Math.min(255, Math.floor((1 - star.z / (width * 2)) * 255));
+        const size = star.z < width * 0.5 ? 1 : 0;
+        this.renderer.setPixel(sx, sy, [brightness, brightness, brightness * 0.9]);
+        if (size > 0 && sx + 1 < width) {
+          this.renderer.setPixel(sx + 1, sy, [brightness * 0.5, brightness * 0.5, brightness * 0.45]);
+        }
+      }
+    }
+  }
+
+  private _stepFireworks(state: EffectState, width: number, height: number): void {
+    type Rocket = { x: number; y: number; vy: number; color: RGBColor; exploded: boolean };
+    type Particle = { x: number; y: number; vx: number; vy: number; color: RGBColor; life: number };
+    const rockets = state.rockets as Rocket[];
+    const particles = state.particles as Particle[];
+
+    (state.spawnTimer as number)++;
+    if ((state.spawnTimer as number) > 40 && rockets.length < 3) {
+      state.spawnTimer = 0;
+      const hue = Math.random();
+      const [r, g, b] = hsvToRgb(hue, 1, 1);
+      rockets.push({
+        x: Math.random() * width,
+        y: height - 1,
+        vy: -(1.0 + Math.random() * 0.5),
+        color: [r, g, b],
+        exploded: false,
+      });
+    }
+
+    for (let i = rockets.length - 1; i >= 0; i--) {
+      const rocket = rockets[i];
+      rocket.y += rocket.vy;
+      rocket.vy += 0.02; // gravity
+      if (rocket.vy >= -0.2 && !rocket.exploded) {
+        rocket.exploded = true;
+        const numParticles = 16 + Math.floor(Math.random() * 8);
+        for (let j = 0; j < numParticles; j++) {
+          const angle = (j / numParticles) * Math.PI * 2;
+          const speed = 0.5 + Math.random() * 0.8;
+          particles.push({
+            x: rocket.x,
+            y: rocket.y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            color: [rocket.color[0], rocket.color[1], rocket.color[2]],
+            life: 1.0,
+          });
+        }
+        rockets.splice(i, 1);
+      }
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.03; // gravity
+      p.life -= 0.02;
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+  }
+
+  private _renderFireworks(state: EffectState): void {
+    const { width, height } = this.renderer;
+    type Rocket = { x: number; y: number; color: RGBColor };
+    type Particle = { x: number; y: number; color: RGBColor; life: number };
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        this.renderer.setPixel(x, y, [5, 5, 10]);
+      }
+    }
+
+    const rockets = state.rockets as Rocket[];
+    for (const rocket of rockets) {
+      const rx = Math.floor(rocket.x);
+      const ry = Math.floor(rocket.y);
+      if (rx >= 0 && rx < width && ry >= 0 && ry < height) {
+        this.renderer.setPixel(rx, ry, [255, 255, 200]);
+      }
+    }
+
+    const particles = state.particles as Particle[];
+    for (const p of particles) {
+      const px = Math.floor(p.x);
+      const py = Math.floor(p.y);
+      if (px >= 0 && px < width && py >= 0 && py < height) {
+        this.renderer.setPixel(px, py, [
+          p.color[0] * p.life,
+          p.color[1] * p.life,
+          p.color[2] * p.life,
+        ]);
+      }
+    }
+  }
+
+  private _stepRainStorm(state: EffectState, width: number, height: number): void {
+    const drops = state.drops as Array<{ x: number; y: number; speed: number; brightness: number; length: number }>;
+    state.time = ((state.time as number) || 0) + 1;
+
+    for (const drop of drops) {
+      drop.y += drop.speed;
+      if (drop.y > height + drop.length) {
+        drop.y = -drop.length;
+        drop.x = Math.random() * width;
+        drop.speed = 0.3 + Math.random() * 0.5;
+        drop.brightness = 0.3 + Math.random() * 0.7;
+      }
+    }
+
+    // Random lightning flash
+    if (Math.random() < 0.005) {
+      state.lightning = 8;
+    }
+    if ((state.lightning as number) > 0) {
+      (state.lightning as number)--;
+    }
+  }
+
+  private _renderRainStorm(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const drops = state.drops as Array<{ x: number; y: number; speed: number; brightness: number; length: number }>;
+    const lightning = (state.lightning as number) || 0;
+
+    const bgBright = lightning > 0 ? Math.min(80, lightning * 10) : 3;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        this.renderer.setPixel(x, y, [bgBright, bgBright, bgBright + 5]);
+      }
+    }
+
+    for (const drop of drops) {
+      for (let i = 0; i < drop.length; i++) {
+        const dy = Math.floor(drop.y) - i;
+        const dx = Math.floor(drop.x);
+        if (dx >= 0 && dx < width && dy >= 0 && dy < height) {
+          const fade = 1 - (i / drop.length);
+          const b = drop.brightness * fade;
+          this.renderer.setPixel(dx, dy, [b * 100, b * 150, b * 255]);
+        }
+      }
+    }
+  }
+
+  private _renderMunch(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const counter = (state.counter as number) || 0;
+    const time = (state.time as number) || 0;
+    const hueBase = (time * 0.005) % 1;
+
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        const xorVal = (x ^ y ^ counter) & 0xF;
+        const brightness = xorVal / 15;
+        const hue = (hueBase + brightness * 0.3) % 1;
+        const [r, g, b] = hsvToRgb(hue, 0.8, brightness * 0.8);
+        this.renderer.setPixel(x, y, [r, g, b]);
+      }
+    }
+  }
+
+  private _stepBouncing(state: EffectState, width: number, height: number): void {
+    const balls = state.balls as Array<{ x: number; y: number; vx: number; vy: number; color: RGBColor }>;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    // Fade trail buffer
+    for (let i = 0; i < trailBuffer.length; i++) {
+      trailBuffer[i] = [
+        trailBuffer[i][0] * 0.85,
+        trailBuffer[i][1] * 0.85,
+        trailBuffer[i][2] * 0.85,
+      ];
+    }
+
+    for (const ball of balls) {
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      if (ball.x <= 0 || ball.x >= width - 1) {
+        ball.vx *= -1;
+        ball.x = Math.max(0, Math.min(width - 1, ball.x));
+      }
+      if (ball.y <= 0 || ball.y >= height - 1) {
+        ball.vy *= -1;
+        ball.y = Math.max(0, Math.min(height - 1, ball.y));
+      }
+
+      const px = Math.floor(ball.x);
+      const py = Math.floor(ball.y);
+      if (px >= 0 && px < width && py >= 0 && py < height) {
+        const idx = py * width + px;
+        trailBuffer[idx] = [ball.color[0], ball.color[1], ball.color[2]];
+      }
+    }
+  }
+
+  private _renderBouncing(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = y * width + x;
+        const [r, g, b] = trailBuffer[idx] || [0, 0, 0];
+        this.renderer.setPixel(x, y, [r, g, b]);
+      }
+    }
+  }
+
+  private _stepFlowField(state: EffectState, width: number, height: number): void {
+    state.time = ((state.time as number) || 0) + 0.02;
+    const time = state.time as number;
+    const particles = state.flowParticles as Array<{ x: number; y: number; hue: number }>;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    // Fade trail buffer
+    for (let i = 0; i < trailBuffer.length; i++) {
+      trailBuffer[i] = [
+        trailBuffer[i][0] * 0.92,
+        trailBuffer[i][1] * 0.92,
+        trailBuffer[i][2] * 0.92,
+      ];
+    }
+
+    for (const p of particles) {
+      // Perlin-like flow using layered sine
+      const angle =
+        Math.sin(p.x * 0.3 + time) * 2.0 +
+        Math.cos(p.y * 0.3 + time * 0.7) * 2.0 +
+        Math.sin((p.x + p.y) * 0.2 + time * 1.3);
+
+      p.x += Math.cos(angle) * 0.5;
+      p.y += Math.sin(angle) * 0.5;
+      p.hue = (p.hue + 0.002) % 1;
+
+      // Wrap around edges
+      if (p.x < 0) p.x += width;
+      if (p.x >= width) p.x -= width;
+      if (p.y < 0) p.y += height;
+      if (p.y >= height) p.y -= height;
+
+      const px = Math.floor(p.x);
+      const py = Math.floor(p.y);
+      if (px >= 0 && px < width && py >= 0 && py < height) {
+        const [r, g, b] = hsvToRgb(p.hue, 0.8, 0.9);
+        const idx = py * width + px;
+        trailBuffer[idx] = [
+          Math.min(255, trailBuffer[idx][0] + r * 0.5),
+          Math.min(255, trailBuffer[idx][1] + g * 0.5),
+          Math.min(255, trailBuffer[idx][2] + b * 0.5),
+        ];
+      }
+    }
+  }
+
+  private _renderFlowField(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = y * width + x;
+        const [r, g, b] = trailBuffer[idx] || [0, 0, 0];
         this.renderer.setPixel(x, y, [r, g, b]);
       }
     }

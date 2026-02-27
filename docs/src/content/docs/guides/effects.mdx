@@ -1,12 +1,12 @@
 ---
 title: Effects
 draft: false
-description: Browse all 24 built-in effects and learn how to use them.
+description: Browse all 40 built-in effects and learn how to use them.
 ---
 
 import Demo from '../../../components/Demo.tsx';
 
-The `effect` prop selects an animation effect. There are three categories: **text**, **ambient**, and **color**.
+The `effect` prop selects an animation effect. There are three categories: **text**, **ambient**, and **color**. Effects inspired by the [MD_Parola](https://github.com/MajicDesigns/MD_Parola) and [ESP32-HUB75-MatrixPanel-DMA](https://github.com/mrcodetastic/ESP32-HUB75-MatrixPanel-DMA) LED libraries are also available.
 
 ## Text effects
 
@@ -124,6 +124,112 @@ Random sparkle effect overlaid on the text.
 
 ---
 
+## Parola-inspired transition effects
+
+These text transition effects are inspired by the [MD_Parola](https://github.com/MajicDesigns/MD_Parola) Arduino LED matrix library. They provide reveal/hide animations commonly used on physical LED marquee displays.
+
+### scroll_up
+
+Text scrolls upward through the display.
+
+<Demo client:load text="SCROLL UP" effect="scroll_up" speed={40} foregroundColor="#00ddff" />
+
+```tsx
+<PixelDisplay text="SCROLL UP" effect="scroll_up" speed={40} />
+```
+
+### scroll_down
+
+Text scrolls downward through the display.
+
+<Demo client:load text="SCROLL DOWN" effect="scroll_down" speed={40} foregroundColor="#ff9900" />
+
+```tsx
+<PixelDisplay text="SCROLL DOWN" effect="scroll_down" speed={40} />
+```
+
+### dissolve
+
+Pixels randomly appear and disappear, dissolving the text in and out.
+
+<Demo client:load text="DISSOLVE" effect="dissolve" speed={30} foregroundColor="#ff44aa" />
+
+```tsx
+<PixelDisplay text="DISSOLVE" effect="dissolve" speed={30} />
+```
+
+### blinds
+
+Text is revealed and hidden behind vertical blinds that open and close.
+
+<Demo client:load text="BLINDS" effect="blinds" speed={30} foregroundColor="#44ff88" />
+
+```tsx
+<PixelDisplay text="BLINDS" effect="blinds" speed={30} />
+```
+
+### wipe
+
+Text is wiped on and off column by column with a bright cursor leading the edge.
+
+<Demo client:load text="WIPE" effect="wipe" speed={40} foregroundColor="#ffcc00" />
+
+```tsx
+<PixelDisplay text="WIPE" effect="wipe" speed={40} />
+```
+
+### scan_horiz
+
+A bright column scans horizontally, revealing or hiding the text as it passes.
+
+<Demo client:load text="SCAN H" effect="scan_horiz" speed={40} foregroundColor="#00ff66" />
+
+```tsx
+<PixelDisplay text="SCAN H" effect="scan_horiz" speed={40} />
+```
+
+### scan_vert
+
+A bright row scans vertically, revealing or hiding the text as it passes.
+
+<Demo client:load text="SCAN V" effect="scan_vert" speed={30} foregroundColor="#6644ff" />
+
+```tsx
+<PixelDisplay text="SCAN V" effect="scan_vert" speed={30} />
+```
+
+### grow_up
+
+Text grows upward from the bottom row, then shrinks back down.
+
+<Demo client:load text="GROW UP" effect="grow_up" speed={30} foregroundColor="#ff6644" />
+
+```tsx
+<PixelDisplay text="GROW UP" effect="grow_up" speed={30} />
+```
+
+### grow_down
+
+Text grows downward from the top row, then shrinks back up.
+
+<Demo client:load text="GROW DN" effect="grow_down" speed={30} foregroundColor="#44ddff" />
+
+```tsx
+<PixelDisplay text="GROW DN" effect="grow_down" speed={30} />
+```
+
+### opening
+
+Text appears from the center outward like opening doors, then closes back.
+
+<Demo client:load text="OPENING" effect="opening" speed={40} foregroundColor="#ff00ff" />
+
+```tsx
+<PixelDisplay text="OPENING" effect="opening" speed={40} />
+```
+
+---
+
 ## Ambient effects
 
 Ambient effects fill the entire display and do **not** require any text. They render animated backgrounds.
@@ -230,6 +336,72 @@ Ambient effects fill the entire display and do **not** require any text. They re
 
 ```tsx
 <PixelDisplay effect="aurora" />
+```
+
+---
+
+## HUB75-inspired panel effects
+
+These ambient effects are inspired by the [ESP32-HUB75-MatrixPanel-DMA](https://github.com/mrcodetastic/ESP32-HUB75-MatrixPanel-DMA) library's AuroraDemo patterns. They recreate classic LED panel demo effects for the web.
+
+### starfield
+
+3D starfield with perspective depth — stars fly toward the viewer.
+
+<Demo client:load effect="starfield" speed={50} />
+
+```tsx
+<PixelDisplay effect="starfield" />
+```
+
+### fireworks
+
+Rockets launch and explode into colorful particle bursts.
+
+<Demo client:load effect="fireworks" speed={50} />
+
+```tsx
+<PixelDisplay effect="fireworks" />
+```
+
+### rain_storm
+
+Falling rain with occasional lightning flashes that illuminate the display.
+
+<Demo client:load effect="rain_storm" speed={50} />
+
+```tsx
+<PixelDisplay effect="rain_storm" />
+```
+
+### munch
+
+Classic demoscene XOR bit-pattern animation with color cycling.
+
+<Demo client:load effect="munch" speed={50} />
+
+```tsx
+<PixelDisplay effect="munch" />
+```
+
+### bouncing
+
+Colored particles bounce around the display leaving fading trails.
+
+<Demo client:load effect="bouncing" speed={50} />
+
+```tsx
+<PixelDisplay effect="bouncing" />
+```
+
+### flow_field
+
+Particles follow invisible noise-driven flow lines, leaving glowing trails.
+
+<Demo client:load effect="flow_field" speed={50} />
+
+```tsx
+<PixelDisplay effect="flow_field" />
 ```
 
 ---
