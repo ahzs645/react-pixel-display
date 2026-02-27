@@ -42,7 +42,7 @@ export class ImageDataLEDRenderer {
     this._extendedColorPixels = [];
     this.extendedWidth = this.width;
     this.effect = 'fixed';
-    this.speed = 50;
+    this.speed = 100;
     this.animationId = null;
     this.lastFrameTime = 0;
     this._isRunning = false;
@@ -259,7 +259,7 @@ export class ImageDataLEDRenderer {
     }
   }
 
-  setEffect(effect: string, speed = 50): void {
+  setEffect(effect: string, speed = 100): void {
     const wasRunning = this._isRunning;
     if (this.effect !== effect) {
       this.effect = effect;

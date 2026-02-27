@@ -9,6 +9,10 @@ const textEffects: { name: EffectName; label: string }[] = [
   { name: 'scroll_ltr', label: 'Scroll LTR' },
   { name: 'scroll_up', label: 'Scroll Up' },
   { name: 'scroll_down', label: 'Scroll Down' },
+  { name: 'scroll_up_left', label: 'Up-Left' },
+  { name: 'scroll_up_right', label: 'Up-Right' },
+  { name: 'scroll_down_left', label: 'Down-Left' },
+  { name: 'scroll_down_right', label: 'Down-Right' },
   { name: 'blink', label: 'Blink' },
   { name: 'breeze', label: 'Breeze' },
   { name: 'snow', label: 'Snow' },
@@ -25,6 +29,10 @@ const textEffects: { name: EffectName; label: string }[] = [
   { name: 'grow_up', label: 'Grow Up' },
   { name: 'grow_down', label: 'Grow Down' },
   { name: 'opening', label: 'Opening' },
+  { name: 'closing', label: 'Closing' },
+  { name: 'slice', label: 'Slice' },
+  { name: 'mesh', label: 'Mesh' },
+  { name: 'random', label: 'Random' },
 ];
 
 const ambientEffects: { name: EffectName; label: string }[] = [
@@ -47,6 +55,10 @@ const ambientEffects: { name: EffectName; label: string }[] = [
   { name: 'munch', label: 'Munch' },
   { name: 'bouncing', label: 'Bouncing' },
   { name: 'flow_field', label: 'Flow Field' },
+  { name: 'attract', label: 'Attract' },
+  { name: 'snake', label: 'Snake' },
+  { name: 'pendulum_wave', label: 'Pendulum Wave' },
+  { name: 'radar', label: 'Radar' },
 ];
 
 const colorEffects: { name: EffectName; label: string }[] = [
@@ -75,7 +87,7 @@ const presets: { label: string; config: Partial<PlaygroundState> }[] = [
     config: {
       text: 'INSERT COIN',
       effect: 'blink' as EffectName,
-      speed: 25,
+      speed: 50,
       foregroundColor: '#00ff66',
       backgroundColor: '#000000',
       width: 96,
@@ -155,7 +167,7 @@ interface PlaygroundState {
 const defaults: PlaygroundState = {
   text: 'HELLO WORLD!',
   effect: 'scroll_rtl',
-  speed: 50,
+  speed: 100,
   foregroundColor: '#ff6600',
   backgroundColor: '#111111',
   width: 96,
@@ -253,7 +265,7 @@ export default function TickerPlayground() {
     '<PixelDisplay',
     state.text ? `  text="${state.text}"` : null,
     `  effect="${state.effect}"`,
-    state.speed !== 50 ? `  speed={${state.speed}}` : null,
+    state.speed !== 100 ? `  speed={${state.speed}}` : null,
     state.foregroundColor !== '#ff6600' ? `  foregroundColor="${state.foregroundColor}"` : null,
     state.backgroundColor !== '#111111' ? `  backgroundColor="${state.backgroundColor}"` : null,
     state.width !== 64 ? `  width={${state.width}}` : null,
