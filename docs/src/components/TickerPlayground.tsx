@@ -188,13 +188,12 @@ const panel: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  display: 'block',
   color: '#999',
   fontSize: '11px',
   fontWeight: 600,
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
-  marginBottom: '6px',
+  whiteSpace: 'nowrap',
 };
 
 const inputStyle: React.CSSProperties = {
@@ -207,6 +206,19 @@ const inputStyle: React.CSSProperties = {
   fontSize: '13px',
   fontFamily: "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
   boxSizing: 'border-box',
+};
+
+const selectStyle: React.CSSProperties = {
+  padding: '7px 10px',
+  border: '1px solid #2a2a4a',
+  borderRadius: '6px',
+  background: '#0a0a1e',
+  color: '#e0e0e0',
+  fontSize: '13px',
+  fontFamily: "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
+  boxSizing: 'border-box',
+  cursor: 'pointer',
+  appearance: 'auto',
 };
 
 const chipBase: React.CSSProperties = {
@@ -222,14 +234,26 @@ const chipBase: React.CSSProperties = {
   transition: 'all 0.15s ease',
 };
 
-const sectionTitle: React.CSSProperties = {
-  color: '#666',
-  fontSize: '10px',
+const inlineRow: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+};
+
+const sliderLabel: React.CSSProperties = {
+  ...labelStyle,
+  minWidth: '90px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: '4px',
+};
+
+const sliderValue: React.CSSProperties = {
+  color: '#ff6600',
+  fontVariantNumeric: 'tabular-nums',
+  fontSize: '11px',
   fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: '0.08em',
-  marginBottom: '4px',
-  marginTop: '8px',
 };
 
 // ── Component ───────────────────────────────────────────────────────
@@ -300,6 +324,10 @@ export default function TickerPlayground() {
     (e) => e.name === state.effect,
   );
 
+  // Find current effect label for display
+  const allEffects = [...textEffects, ...colorEffects, ...ambientEffects];
+  const currentEffectLabel = allEffects.find((e) => e.name === state.effect)?.label ?? state.effect;
+
   return (
     <div style={{ margin: '1.5rem 0' }}>
       {/* ── Live display ─────────────────────────────────── */}
@@ -331,7 +359,7 @@ export default function TickerPlayground() {
 
       {/* ── Presets ───────────────────────────────────────── */}
       <div style={panel}>
-        <span style={labelStyle}>Presets</span>
+        <span style={{ ...labelStyle, display: 'block', marginBottom: '8px' }}>Presets</span>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
           {presets.map((p) => (
             <button
@@ -352,7 +380,7 @@ export default function TickerPlayground() {
 
       {/* ── Text + playback ──────────────────────────────── */}
       <div style={panel}>
-        <span style={labelStyle}>Text</span>
+        <span style={{ ...labelStyle, display: 'block', marginBottom: '6px' }}>Text</span>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <input
             type="text"
@@ -378,183 +406,129 @@ export default function TickerPlayground() {
         </div>
       </div>
 
-      {/* ── Effect picker ────────────────────────────────── */}
-      <div style={panel}>
-        <span style={labelStyle}>Effect</span>
-
-        <div style={sectionTitle}>Text Effects</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '6px' }}>
-          {textEffects.map(({ name, label }) => (
-            <button
-              key={name}
-              onClick={() => set('effect', name)}
-              style={{
-                ...chipBase,
-                ...(state.effect === name
-                  ? { background: '#ff6600', color: '#000', borderColor: '#ff6600' }
-                  : {}),
-              }}
-            >
-              {label}
-            </button>
-          ))}
+      {/* ── Effect + Speed ───────────────────────────────── */}
+      <div style={{ ...panel, display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ ...inlineRow, flex: '1 1 280px', minWidth: 0 }}>
+          <span style={labelStyle}>Effect</span>
+          <select
+            value={state.effect}
+            onChange={(e) => set('effect', e.target.value as EffectName)}
+            style={{ ...selectStyle, flex: 1, minWidth: 0 }}
+          >
+            <optgroup label="Text Effects">
+              {textEffects.map(({ name, label }) => (
+                <option key={name} value={name}>{label}</option>
+              ))}
+            </optgroup>
+            <optgroup label="Color Effects">
+              {colorEffects.map(({ name, label }) => (
+                <option key={name} value={name}>{label}</option>
+              ))}
+            </optgroup>
+            <optgroup label="Ambient Effects (no text)">
+              {ambientEffects.map(({ name, label }) => (
+                <option key={name} value={name}>{label}</option>
+              ))}
+            </optgroup>
+          </select>
         </div>
-
-        <div style={sectionTitle}>Color Effects</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '6px' }}>
-          {colorEffects.map(({ name, label }) => (
-            <button
-              key={name}
-              onClick={() => set('effect', name)}
-              style={{
-                ...chipBase,
-                ...(state.effect === name
-                  ? { background: '#ff6600', color: '#000', borderColor: '#ff6600' }
-                  : {}),
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <div style={sectionTitle}>Ambient Effects (no text)</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-          {ambientEffects.map(({ name, label }) => (
-            <button
-              key={name}
-              onClick={() => set('effect', name)}
-              style={{
-                ...chipBase,
-                ...(state.effect === name
-                  ? { background: '#ff6600', color: '#000', borderColor: '#ff6600' }
-                  : {}),
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Speed + colors ───────────────────────────────── */}
-      <div style={{ ...panel, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-        <div>
-          <span style={labelStyle}>Speed: {state.speed}</span>
+        <div style={{ ...inlineRow, flex: '1 1 200px', minWidth: 0 }}>
+          <span style={sliderLabel}>
+            Speed <span style={sliderValue}>{state.speed}</span>
+          </span>
           <input
             type="range"
             min={1}
             max={100}
             value={state.speed}
             onChange={(e) => set('speed', Number(e.target.value))}
-            style={{ width: '100%', accentColor: '#ff6600' }}
+            style={{ flex: 1, accentColor: '#ff6600', minWidth: 0 }}
           />
         </div>
-        <div>
+      </div>
+
+      {/* ── Colors ───────────────────────────────────────── */}
+      <div style={{ ...panel, display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ ...inlineRow, flex: '1 1 200px' }}>
           <span style={labelStyle}>Foreground</span>
-          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-            <input
-              type="color"
-              value={state.foregroundColor}
-              onChange={(e) => set('foregroundColor', e.target.value)}
-              style={{
-                width: '32px',
-                height: '32px',
-                border: '1px solid #2a2a4a',
-                borderRadius: '4px',
-                background: 'none',
-                cursor: 'pointer',
-                padding: 0,
-              }}
-            />
-            <input
-              type="text"
-              value={state.foregroundColor}
-              onChange={(e) => set('foregroundColor', e.target.value)}
-              style={{ ...inputStyle, width: 'auto', flex: 1 }}
-            />
-          </div>
+          <input
+            type="color"
+            value={state.foregroundColor}
+            onChange={(e) => set('foregroundColor', e.target.value)}
+            style={{
+              width: '28px',
+              height: '28px',
+              border: '1px solid #2a2a4a',
+              borderRadius: '4px',
+              background: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              flexShrink: 0,
+            }}
+          />
+          <input
+            type="text"
+            value={state.foregroundColor}
+            onChange={(e) => set('foregroundColor', e.target.value)}
+            style={{ ...inputStyle, flex: 1, minWidth: '70px' }}
+          />
         </div>
-        <div>
+        <div style={{ ...inlineRow, flex: '1 1 200px' }}>
           <span style={labelStyle}>Background</span>
-          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <input
+            type="color"
+            value={state.backgroundColor}
+            onChange={(e) => set('backgroundColor', e.target.value)}
+            style={{
+              width: '28px',
+              height: '28px',
+              border: '1px solid #2a2a4a',
+              borderRadius: '4px',
+              background: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              flexShrink: 0,
+            }}
+          />
+          <input
+            type="text"
+            value={state.backgroundColor}
+            onChange={(e) => set('backgroundColor', e.target.value)}
+            style={{ ...inputStyle, flex: 1, minWidth: '70px' }}
+          />
+        </div>
+      </div>
+
+      {/* ── Dimensions ───────────────────────────────────── */}
+      <div style={{ ...panel, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+        {([
+          { key: 'width' as const, label: 'Width', suffix: 'px', min: 16, max: 192, step: 8 },
+          { key: 'height' as const, label: 'Height', suffix: 'px', min: 8, max: 64, step: 4 },
+          { key: 'scale' as const, label: 'Scale', suffix: 'x', min: 1, max: 12, step: 1 },
+          { key: 'pixelGap' as const, label: 'Pixel Gap', suffix: '', min: 0, max: 0.5, step: 0.01 },
+        ] as const).map(({ key, label, suffix, min, max, step }) => (
+          <div key={key} style={inlineRow}>
+            <span style={{ ...sliderLabel, minWidth: '100px' }}>
+              {label}{' '}
+              <span style={sliderValue}>
+                {key === 'pixelGap' ? state[key].toFixed(2) : state[key]}{suffix}
+              </span>
+            </span>
             <input
-              type="color"
-              value={state.backgroundColor}
-              onChange={(e) => set('backgroundColor', e.target.value)}
-              style={{
-                width: '32px',
-                height: '32px',
-                border: '1px solid #2a2a4a',
-                borderRadius: '4px',
-                background: 'none',
-                cursor: 'pointer',
-                padding: 0,
-              }}
-            />
-            <input
-              type="text"
-              value={state.backgroundColor}
-              onChange={(e) => set('backgroundColor', e.target.value)}
-              style={{ ...inputStyle, width: 'auto', flex: 1 }}
+              type="range"
+              min={min}
+              max={max}
+              step={step}
+              value={state[key]}
+              onChange={(e) => set(key, Number(e.target.value))}
+              style={{ flex: 1, accentColor: '#ff6600', minWidth: 0 }}
             />
           </div>
-        </div>
+        ))}
       </div>
 
-      {/* ── Dimensions + display options ─────────────────── */}
-      <div style={{ ...panel, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px' }}>
-        <div>
-          <span style={labelStyle}>Width: {state.width}px</span>
-          <input
-            type="range"
-            min={16}
-            max={192}
-            step={8}
-            value={state.width}
-            onChange={(e) => set('width', Number(e.target.value))}
-            style={{ width: '100%', accentColor: '#ff6600' }}
-          />
-        </div>
-        <div>
-          <span style={labelStyle}>Height: {state.height}px</span>
-          <input
-            type="range"
-            min={8}
-            max={64}
-            step={4}
-            value={state.height}
-            onChange={(e) => set('height', Number(e.target.value))}
-            style={{ width: '100%', accentColor: '#ff6600' }}
-          />
-        </div>
-        <div>
-          <span style={labelStyle}>Scale: {state.scale}</span>
-          <input
-            type="range"
-            min={1}
-            max={12}
-            value={state.scale}
-            onChange={(e) => set('scale', Number(e.target.value))}
-            style={{ width: '100%', accentColor: '#ff6600' }}
-          />
-        </div>
-        <div>
-          <span style={labelStyle}>Pixel Gap: {state.pixelGap.toFixed(2)}</span>
-          <input
-            type="range"
-            min={0}
-            max={0.5}
-            step={0.01}
-            value={state.pixelGap}
-            onChange={(e) => set('pixelGap', Number(e.target.value))}
-            style={{ width: '100%', accentColor: '#ff6600' }}
-          />
-        </div>
-      </div>
-
-      {/* ── Toggles ──────────────────────────────────────── */}
-      <div style={{ ...panel, display: 'flex', gap: '24px', alignItems: 'center' }}>
+      {/* ── Options ──────────────────────────────────────── */}
+      <div style={{ ...panel, display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
           <input
             type="checkbox"
@@ -565,22 +539,17 @@ export default function TickerPlayground() {
           <span style={{ color: '#ccc', fontSize: '13px' }}>Glow</span>
         </label>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ ...labelStyle, margin: 0 }}>Renderer</span>
-          {(['imagedata', 'canvas', 'svg'] as RendererType[]).map((r) => (
-            <button
-              key={r}
-              onClick={() => set('renderer', r)}
-              style={{
-                ...chipBase,
-                ...(state.renderer === r
-                  ? { background: '#ff6600', color: '#000', borderColor: '#ff6600' }
-                  : {}),
-              }}
-            >
-              {r}
-            </button>
-          ))}
+        <div style={inlineRow}>
+          <span style={labelStyle}>Renderer</span>
+          <select
+            value={state.renderer}
+            onChange={(e) => set('renderer', e.target.value as RendererType)}
+            style={selectStyle}
+          >
+            <option value="imagedata">imagedata</option>
+            <option value="canvas">canvas</option>
+            <option value="svg">svg</option>
+          </select>
         </div>
       </div>
 
