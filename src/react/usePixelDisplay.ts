@@ -58,8 +58,8 @@ export function usePixelDisplay(options: UsePixelDisplayOptions) {
     []
   );
 
-  const setEffect = useCallback((effect: string, speed?: number) => {
-    rendererRef.current?.setEffect(effect, speed);
+  const setEffect = useCallback((effect: string, speed?: number, options?: Record<string, unknown>) => {
+    rendererRef.current?.setEffect(effect, speed, options);
   }, []);
 
   const start = useCallback(() => rendererRef.current?.start(), []);

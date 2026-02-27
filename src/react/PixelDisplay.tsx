@@ -16,6 +16,7 @@ export const PixelDisplay = forwardRef<PixelDisplayRef, PixelDisplayProps>(
       foregroundColor = '#ff6600',
       backgroundColor = '#111',
       effect = 'fixed',
+      effectOptions,
       speed = 100,
       renderer: rendererType = 'imagedata',
       glow = true,
@@ -81,7 +82,7 @@ export const PixelDisplay = forwardRef<PixelDisplayRef, PixelDisplayProps>(
     useEffect(() => {
       if (!rendererRef.current) return;
 
-      setEffect(effect, speed);
+      setEffect(effect, speed, effectOptions);
 
       if (effect === 'fixed') {
         stop();
@@ -89,7 +90,7 @@ export const PixelDisplay = forwardRef<PixelDisplayRef, PixelDisplayProps>(
       } else {
         start();
       }
-    }, [effect, speed, setEffect, start, stop, renderStatic, rendererRef]);
+    }, [effect, speed, effectOptions, setEffect, start, stop, renderStatic, rendererRef]);
 
     // Imperative API
     useImperativeHandle(

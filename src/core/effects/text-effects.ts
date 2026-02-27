@@ -1,5 +1,6 @@
 import type { LEDRenderer, EffectState, PixelArray } from '../types';
 import { hexToRgb } from '../utils';
+import { resolveSprite, SPRITES, type SpriteDefinition } from './sprites';
 
 export class TextEffects {
   private renderer: LEDRenderer;
@@ -141,6 +142,40 @@ export class TextEffects {
         state.xOffset = width;
         state.yOffset = height;
         break;
+
+      // Additional Parola-style effects
+      case 'wipe_plain':
+        state.wipeX = -1;
+        state.direction = 1;
+        break;
+      case 'scan_horiz_x':
+        state.scanX = 0;
+        state.direction = 1;
+        break;
+      case 'scan_vert_x':
+        state.scanY = 0;
+        state.direction = 1;
+        break;
+      case 'opening_cursor':
+        state.halfWidth = 0;
+        state.direction = 1;
+        break;
+      case 'closing_cursor':
+        state.halfWidth = Math.ceil(width / 2);
+        state.direction = -1;
+        break;
+      case 'sprite': {
+        // Resolve sprite from options or default to pacman
+        const spriteDef = resolveSprite(
+          (state.sprite as string | SpriteDefinition) || 'pacman'
+        ) || SPRITES.pacman;
+        state._spriteDef = spriteDef;
+        state.spriteX = -(spriteDef.width);
+        state.frameIndex = 0;
+        state.phase = 'in'; // 'in' = revealing, 'out' = hiding
+        state.revealedUpTo = -1; // columns revealed so far
+        break;
+      }
     }
   }
 
@@ -378,6 +413,100 @@ export class TextEffects {
           state.yOffset = this.renderer.height;
         }
         break;
+
+      // Additional Parola-style effects
+      case 'wipe_plain':
+        (state.wipeX as number) += (state.direction as number);
+        if ((state.wipeX as number) >= width) {
+          state.direction = -1;
+        } else if ((state.wipeX as number) <= -1) {
+          state.direction = 1;
+        }
+        break;
+      case 'scan_horiz_x':
+        (state.scanX as number) += (state.direction as number);
+        if ((state.scanX as number) >= width) {
+          state.direction = -1;
+          state.scanX = width - 1;
+        } else if ((state.scanX as number) < 0) {
+          state.direction = 1;
+          state.scanX = 0;
+        }
+        break;
+      case 'scan_vert_x': {
+        const h = this.renderer.height;
+        (state.scanY as number) += (state.direction as number);
+        if ((state.scanY as number) >= h) {
+          state.direction = -1;
+          state.scanY = h - 1;
+        } else if ((state.scanY as number) < 0) {
+          state.direction = 1;
+          state.scanY = 0;
+        }
+        break;
+      }
+      case 'opening_cursor': {
+        const halfMax = Math.ceil(width / 2);
+        (state.halfWidth as number) += (state.direction as number);
+        if ((state.halfWidth as number) >= halfMax) {
+          state.halfWidth = halfMax;
+          state.direction = -1;
+        } else if ((state.halfWidth as number) <= 0) {
+          state.halfWidth = 0;
+          state.direction = 1;
+        }
+        break;
+      }
+      case 'closing_cursor': {
+        const halfMaxC = Math.ceil(width / 2);
+        (state.halfWidth as number) += (state.direction as number);
+        if ((state.halfWidth as number) >= halfMaxC) {
+          state.halfWidth = halfMaxC;
+          state.direction = -1;
+        } else if ((state.halfWidth as number) <= 0) {
+          state.halfWidth = 0;
+          state.direction = 1;
+        }
+        break;
+      }
+      case 'sprite': {
+        const spDef = state._spriteDef as SpriteDefinition;
+        if (!spDef) break;
+        const sprW = spDef.width;
+        const phase = state.phase as string;
+
+        (state.spriteX as number) += 1;
+        // Cycle animation frame each step
+        state.frameIndex = ((state.frameIndex as number) + 1) % spDef.frames.length;
+
+        if (phase === 'in') {
+          // The trailing edge of the sprite reveals text
+          const trailEdge = (state.spriteX as number) - sprW;
+          if (trailEdge > (state.revealedUpTo as number)) {
+            state.revealedUpTo = trailEdge;
+          }
+          // When sprite has fully crossed the display, switch to pause then out
+          if ((state.spriteX as number) > width + sprW) {
+            state.phase = 'out';
+            state.spriteX = -(sprW);
+            state.revealedUpTo = width; // everything revealed
+          }
+        } else {
+          // 'out' phase: sprite hides text behind it
+          const trailEdge = (state.spriteX as number) - sprW;
+          if (trailEdge >= 0) {
+            state.revealedUpTo = width - trailEdge - 1;
+            if ((state.revealedUpTo as number) < 0) state.revealedUpTo = -1;
+          }
+          // When fully crossed, restart cycle
+          if ((state.spriteX as number) > width + sprW) {
+            state.phase = 'in';
+            state.spriteX = -(sprW);
+            state.revealedUpTo = -1;
+          }
+        }
+        break;
+      }
     }
   }
 
@@ -558,6 +687,101 @@ export class TextEffects {
             color = displayPixels[sourceY * width + sourceX] || '#111';
           } else {
             color = '#111';
+          }
+        } else if (effectName === 'wipe_plain') {
+          const wipeX = (state.wipeX as number) || 0;
+          const dir = (state.direction as number) || 1;
+          if (dir > 0) {
+            color = x <= wipeX ? (displayPixels[y * width + x] || '#111') : '#111';
+          } else {
+            color = x < wipeX ? (displayPixels[y * width + x] || '#111') : '#111';
+          }
+        } else if (effectName === 'scan_horiz_x') {
+          // PA_SCAN_HORIZX: all text visible except a blank column at scanX
+          const scanX = (state.scanX as number) || 0;
+          if (x === scanX) {
+            color = '#111'; // blank scanning column
+          } else {
+            color = displayPixels[y * width + x] || '#111';
+          }
+        } else if (effectName === 'scan_vert_x') {
+          // PA_SCAN_VERTX: all text visible except a blank row at scanY
+          const scanY = (state.scanY as number) || 0;
+          if (y === scanY) {
+            color = '#111'; // blank scanning row
+          } else {
+            color = displayPixels[y * width + x] || '#111';
+          }
+        } else if (effectName === 'opening_cursor') {
+          const halfWidth = (state.halfWidth as number) || 0;
+          const center = Math.floor(width / 2);
+          const leftEdge = center - halfWidth;
+          const rightEdge = center + halfWidth;
+          if (x >= leftEdge && x <= rightEdge) {
+            color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+          // Light bar cursors at the expanding edges
+          if (halfWidth > 0 && halfWidth < Math.ceil(width / 2)) {
+            if (x === leftEdge || x === rightEdge) {
+              color = '#ffffff';
+            }
+          }
+        } else if (effectName === 'closing_cursor') {
+          const halfWidth = (state.halfWidth as number) || 0;
+          const center = Math.floor(width / 2);
+          const leftEdge = center - halfWidth;
+          const rightEdge = center + halfWidth;
+          if (x < leftEdge || x > rightEdge) {
+            color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+          // Light bar cursors at the closing edges
+          if (halfWidth > 0 && halfWidth < Math.ceil(width / 2)) {
+            if (x === leftEdge || x === rightEdge) {
+              color = '#ffffff';
+            }
+          }
+        } else if (effectName === 'sprite') {
+          const spDef = state._spriteDef as SpriteDefinition | undefined;
+          const spriteX = (state.spriteX as number) || 0;
+          const revealedUpTo = (state.revealedUpTo as number) ?? -1;
+          const phase = (state.phase as string) || 'in';
+
+          if (spDef) {
+            const frameIdx = (state.frameIndex as number) || 0;
+            const frame = spDef.frames[frameIdx % spDef.frames.length];
+            const sprW = spDef.width;
+            const sprH = spDef.height;
+
+            // Center sprite vertically
+            const yOff = Math.floor((height - sprH) / 2);
+            const sprRow = y - yOff;
+            const sprCol = x - spriteX;
+
+            // Check if this pixel is part of the sprite
+            const isSpritePixel =
+              sprCol >= 0 && sprCol < sprW &&
+              sprRow >= 0 && sprRow < sprH &&
+              frame[sprRow]?.[sprCol] === '#';
+
+            if (isSpritePixel) {
+              color = '#ffffff'; // sprite pixels are white/bright
+            } else if (phase === 'in') {
+              // Reveal text behind sprite's trail
+              color = x <= revealedUpTo
+                ? (displayPixels[y * width + x] || '#111')
+                : '#111';
+            } else {
+              // 'out' phase: hide text after sprite passes
+              color = x <= revealedUpTo
+                ? (displayPixels[y * width + x] || '#111')
+                : '#111';
+            }
+          } else {
+            color = displayPixels[y * width + x] || '#111';
           }
         } else {
           color = displayPixels[y * width + x] || '#111';

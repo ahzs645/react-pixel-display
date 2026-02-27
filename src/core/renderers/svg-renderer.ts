@@ -167,11 +167,11 @@ export class SVGLEDMatrixRenderer {
     }
   }
 
-  setEffect(effect: string, speed = 100): void {
+  setEffect(effect: string, speed = 100, options?: Record<string, unknown>): void {
     const wasRunning = this._isRunning;
-    if (this.effect !== effect) {
+    if (this.effect !== effect || options) {
       this.effect = effect;
-      this.effectManager.initEffect(effect, { speed });
+      this.effectManager.initEffect(effect, { speed, ...options });
     }
     this.speed = speed;
     if (wasRunning && effect !== 'fixed') {

@@ -10,6 +10,10 @@ export {
   TextEffects, AmbientEffects, ColorEffects,
 } from './effects';
 
+// Sprites
+export { SPRITES, SPRITE_NAMES, resolveSprite } from './effects/sprites';
+export type { SpriteDefinition } from './effects/sprites';
+
 // Fonts
 export {
   textToPixels, textToScrollPixels, pixelFont,
