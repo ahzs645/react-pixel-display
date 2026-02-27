@@ -43,12 +43,15 @@ export interface EffectInfo {
 
 export type TextEffectName =
   | 'fixed' | 'scroll_ltr' | 'scroll_rtl' | 'blink' | 'breeze'
-  | 'snow' | 'laser' | 'fade' | 'typewriter' | 'bounce' | 'sparkle';
+  | 'snow' | 'laser' | 'fade' | 'typewriter' | 'bounce' | 'sparkle'
+  | 'scroll_up' | 'scroll_down' | 'dissolve' | 'blinds' | 'wipe'
+  | 'scan_horiz' | 'scan_vert' | 'grow_up' | 'grow_down' | 'opening';
 
 export type AmbientEffectName =
   | 'rainbow' | 'matrix' | 'plasma' | 'gradient' | 'fire'
   | 'water' | 'stars' | 'confetti' | 'plasma_wave' | 'radial_pulse'
-  | 'hypnotic' | 'lava' | 'aurora';
+  | 'hypnotic' | 'lava' | 'aurora'
+  | 'starfield' | 'fireworks' | 'rain_storm' | 'munch' | 'bouncing' | 'flow_field';
 
 export type ColorEffectName = 'color_cycle' | 'rainbow_text' | 'neon';
 

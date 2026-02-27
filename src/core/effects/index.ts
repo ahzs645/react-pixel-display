@@ -23,6 +23,18 @@ export const EFFECTS: Record<string, EffectInfo> = {
   bounce: { category: 'text', name: 'Bounce', description: 'Text bounces back and forth' },
   sparkle: { category: 'text', name: 'Sparkle', description: 'Random sparkle overlay' },
 
+  // Parola-inspired transition effects
+  scroll_up: { category: 'text', name: 'Scroll Up', description: 'Text scrolls upward' },
+  scroll_down: { category: 'text', name: 'Scroll Down', description: 'Text scrolls downward' },
+  dissolve: { category: 'text', name: 'Dissolve', description: 'Random pixel dissolve' },
+  blinds: { category: 'text', name: 'Blinds', description: 'Vertical blinds reveal' },
+  wipe: { category: 'text', name: 'Wipe', description: 'Column-by-column wipe with cursor' },
+  scan_horiz: { category: 'text', name: 'Scan Horizontal', description: 'Horizontal scan beam reveals text' },
+  scan_vert: { category: 'text', name: 'Scan Vertical', description: 'Vertical scan beam reveals text' },
+  grow_up: { category: 'text', name: 'Grow Up', description: 'Rows reveal from bottom to top' },
+  grow_down: { category: 'text', name: 'Grow Down', description: 'Rows reveal from top to bottom' },
+  opening: { category: 'text', name: 'Opening', description: 'Center-outward expanding reveal' },
+
   // Ambient effects
   rainbow: { category: 'ambient', name: 'Rainbow', description: 'HSV rainbow gradient' },
   matrix: { category: 'ambient', name: 'Matrix', description: 'Digital rain effect' },
@@ -37,6 +49,14 @@ export const EFFECTS: Record<string, EffectInfo> = {
   hypnotic: { category: 'ambient', name: 'Hypnotic', description: 'Spiral pattern' },
   lava: { category: 'ambient', name: 'Lava', description: 'Flowing lava/magma' },
   aurora: { category: 'ambient', name: 'Aurora', description: 'Northern lights' },
+
+  // HUB75-inspired panel effects
+  starfield: { category: 'ambient', name: 'Starfield', description: '3D starfield with depth' },
+  fireworks: { category: 'ambient', name: 'Fireworks', description: 'Launching fireworks with particle bursts' },
+  rain_storm: { category: 'ambient', name: 'Rain Storm', description: 'Rain with lightning flashes' },
+  munch: { category: 'ambient', name: 'Munch', description: 'XOR bit-pattern animation' },
+  bouncing: { category: 'ambient', name: 'Bouncing', description: 'Bouncing colored particles with trails' },
+  flow_field: { category: 'ambient', name: 'Flow Field', description: 'Particles following noise-based flow' },
 
   // Color effects
   color_cycle: { category: 'color', name: 'Color Cycle', description: 'Cycle through colors' },
