@@ -23,7 +23,7 @@ export interface LEDRenderer {
   clear(): void;
   flush(): void;
   setData(pixels: PixelArray, extendedPixels?: PixelArray | null, extendedWidth?: number | null): void;
-  setEffect(effect: string, speed?: number): void;
+  setEffect(effect: string, speed?: number, options?: Record<string, unknown>): void;
   start(): void;
   stop(): void;
   renderStatic(): void;
@@ -47,7 +47,9 @@ export type TextEffectName =
   | 'scroll_up' | 'scroll_down' | 'dissolve' | 'blinds' | 'wipe'
   | 'scan_horiz' | 'scan_vert' | 'grow_up' | 'grow_down' | 'opening'
   | 'closing' | 'slice' | 'mesh' | 'random'
-  | 'scroll_up_left' | 'scroll_up_right' | 'scroll_down_left' | 'scroll_down_right';
+  | 'scroll_up_left' | 'scroll_up_right' | 'scroll_down_left' | 'scroll_down_right'
+  | 'wipe_plain' | 'scan_horiz_x' | 'scan_vert_x'
+  | 'opening_cursor' | 'closing_cursor' | 'sprite';
 
 export type AmbientEffectName =
   | 'rainbow' | 'matrix' | 'plasma' | 'gradient' | 'fire'
@@ -104,6 +106,7 @@ export interface PixelDisplayProps {
   foregroundColor?: HexColor;
   backgroundColor?: HexColor;
   effect?: EffectName;
+  effectOptions?: Record<string, unknown>;
   speed?: number;
   renderer?: RendererType;
   glow?: boolean;

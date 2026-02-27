@@ -43,6 +43,14 @@ export const EFFECTS: Record<string, EffectInfo> = {
   scroll_down_left: { category: 'text', name: 'Scroll Down-Left', description: 'Diagonal scroll down and to the left' },
   scroll_down_right: { category: 'text', name: 'Scroll Down-Right', description: 'Diagonal scroll down and to the right' },
 
+  // Additional Parola-style effects
+  wipe_plain: { category: 'text', name: 'Wipe (Plain)', description: 'Column-by-column wipe without cursor bar' },
+  scan_horiz_x: { category: 'text', name: 'Scan Horizontal X', description: 'Blank column scans through visible text' },
+  scan_vert_x: { category: 'text', name: 'Scan Vertical X', description: 'Blank row scans through visible text' },
+  opening_cursor: { category: 'text', name: 'Opening Cursor', description: 'Center-outward reveal with light bars at edges' },
+  closing_cursor: { category: 'text', name: 'Closing Cursor', description: 'Ends-inward reveal with light bars at edges' },
+  sprite: { category: 'text', name: 'Sprite', description: 'Animated sprite wipes across to reveal/hide text' },
+
   // Ambient effects
   rainbow: { category: 'ambient', name: 'Rainbow', description: 'HSV rainbow gradient' },
   matrix: { category: 'ambient', name: 'Matrix', description: 'Digital rain effect' },
