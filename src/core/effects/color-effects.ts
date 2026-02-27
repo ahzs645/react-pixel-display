@@ -58,7 +58,7 @@ export class ColorEffects {
         if (isLit) {
           switch (effectName) {
             case 'color_cycle': {
-              const [nr, ng, nb] = hsvToRgb(state.hue as number, 1, 0.8);
+              const [nr, ng, nb] = hsvToRgb(state.hue as number, 1, 1);
               const brightness = (r + g + b) / (3 * 255);
               r = nr * brightness;
               g = ng * brightness;
@@ -67,7 +67,7 @@ export class ColorEffects {
             }
             case 'rainbow_text': {
               const hue = ((state.offset as number) + x / width) % 1;
-              const [nr, ng, nb] = hsvToRgb(hue, 1, 0.8);
+              const [nr, ng, nb] = hsvToRgb(hue, 1, 1);
               const brightness = (r + g + b) / (3 * 255);
               r = nr * brightness;
               g = ng * brightness;

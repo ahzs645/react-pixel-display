@@ -1,7 +1,7 @@
 ---
 title: Effects
 draft: false
-description: Browse all 40 built-in effects and learn how to use them.
+description: Browse all 55+ built-in effects and learn how to use them.
 ---
 
 import Demo from '../../../components/Demo.tsx';
@@ -228,6 +228,86 @@ Text appears from the center outward like opening doors, then closes back.
 <PixelDisplay text="OPENING" effect="opening" speed={40} />
 ```
 
+### closing
+
+Text appears from the edges inward toward the center, like closing doors.
+
+<Demo client:load text="CLOSING" effect="closing" speed={40} foregroundColor="#ff00ff" />
+
+```tsx
+<PixelDisplay text="CLOSING" effect="closing" speed={40} />
+```
+
+### slice
+
+Text enters and exits one column at a time from the right.
+
+<Demo client:load text="SLICE" effect="slice" speed={40} foregroundColor="#ff8844" />
+
+```tsx
+<PixelDisplay text="SLICE" effect="slice" speed={40} />
+```
+
+### mesh
+
+Columns move in alternating up/down directions, creating a weaving mesh pattern.
+
+<Demo client:load text="MESH" effect="mesh" speed={30} foregroundColor="#44ffaa" />
+
+```tsx
+<PixelDisplay text="MESH" effect="mesh" speed={30} />
+```
+
+### random
+
+Pixels appear and disappear in random order, like noise dissolving into text.
+
+<Demo client:load text="RANDOM" effect="random" speed={30} foregroundColor="#ffcc44" />
+
+```tsx
+<PixelDisplay text="RANDOM" effect="random" speed={30} />
+```
+
+### scroll_up_left
+
+Text scrolls diagonally up and to the left.
+
+<Demo client:load text="DIAG" effect="scroll_up_left" speed={40} foregroundColor="#44aaff" />
+
+```tsx
+<PixelDisplay text="DIAG" effect="scroll_up_left" speed={40} />
+```
+
+### scroll_up_right
+
+Text scrolls diagonally up and to the right.
+
+<Demo client:load text="DIAG" effect="scroll_up_right" speed={40} foregroundColor="#ff44aa" />
+
+```tsx
+<PixelDisplay text="DIAG" effect="scroll_up_right" speed={40} />
+```
+
+### scroll_down_left
+
+Text scrolls diagonally down and to the left.
+
+<Demo client:load text="DIAG" effect="scroll_down_left" speed={40} foregroundColor="#aaff44" />
+
+```tsx
+<PixelDisplay text="DIAG" effect="scroll_down_left" speed={40} />
+```
+
+### scroll_down_right
+
+Text scrolls diagonally down and to the right.
+
+<Demo client:load text="DIAG" effect="scroll_down_right" speed={40} foregroundColor="#44ffcc" />
+
+```tsx
+<PixelDisplay text="DIAG" effect="scroll_down_right" speed={40} />
+```
+
 ---
 
 ## Ambient effects
@@ -404,6 +484,46 @@ Particles follow invisible noise-driven flow lines, leaving glowing trails.
 <PixelDisplay effect="flow_field" />
 ```
 
+### attract
+
+Particles orbit and spiral toward a moving central attractor, leaving colorful trails.
+
+<Demo client:load effect="attract" speed={50} />
+
+```tsx
+<PixelDisplay effect="attract" />
+```
+
+### snake
+
+Colored snakes wander the display, leaving fading rainbow trails behind them.
+
+<Demo client:load effect="snake" speed={50} />
+
+```tsx
+<PixelDisplay effect="snake" />
+```
+
+### pendulum_wave
+
+Oscillating dots with staggered frequencies create mesmerizing wave interference patterns.
+
+<Demo client:load effect="pendulum_wave" speed={50} />
+
+```tsx
+<PixelDisplay effect="pendulum_wave" />
+```
+
+### radar
+
+A rotating radar sweep line with concentric rings and fading green trail.
+
+<Demo client:load effect="radar" speed={50} />
+
+```tsx
+<PixelDisplay effect="radar" />
+```
+
 ---
 
 ## Color effects
@@ -444,7 +564,7 @@ Pulsing neon glow effect.
 
 ## Controlling speed
 
-All animated effects accept a `speed` prop (default `50`). Lower values are slower, higher values are faster:
+All animated effects accept a `speed` prop (default `100`). Lower values are slower, higher values are faster:
 
 <Demo client:load text="SLOW" effect="scroll_rtl" speed={15} foregroundColor="#ff6600" />
 

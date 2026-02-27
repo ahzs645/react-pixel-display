@@ -34,6 +34,14 @@ export const EFFECTS: Record<string, EffectInfo> = {
   grow_up: { category: 'text', name: 'Grow Up', description: 'Rows reveal from bottom to top' },
   grow_down: { category: 'text', name: 'Grow Down', description: 'Rows reveal from top to bottom' },
   opening: { category: 'text', name: 'Opening', description: 'Center-outward expanding reveal' },
+  closing: { category: 'text', name: 'Closing', description: 'Ends-inward closing reveal' },
+  slice: { category: 'text', name: 'Slice', description: 'Columns enter one at a time from the right' },
+  mesh: { category: 'text', name: 'Mesh', description: 'Columns move in alternating up/down directions' },
+  random: { category: 'text', name: 'Random', description: 'Pixels appear and disappear randomly' },
+  scroll_up_left: { category: 'text', name: 'Scroll Up-Left', description: 'Diagonal scroll up and to the left' },
+  scroll_up_right: { category: 'text', name: 'Scroll Up-Right', description: 'Diagonal scroll up and to the right' },
+  scroll_down_left: { category: 'text', name: 'Scroll Down-Left', description: 'Diagonal scroll down and to the left' },
+  scroll_down_right: { category: 'text', name: 'Scroll Down-Right', description: 'Diagonal scroll down and to the right' },
 
   // Ambient effects
   rainbow: { category: 'ambient', name: 'Rainbow', description: 'HSV rainbow gradient' },
@@ -57,6 +65,10 @@ export const EFFECTS: Record<string, EffectInfo> = {
   munch: { category: 'ambient', name: 'Munch', description: 'XOR bit-pattern animation' },
   bouncing: { category: 'ambient', name: 'Bouncing', description: 'Bouncing colored particles with trails' },
   flow_field: { category: 'ambient', name: 'Flow Field', description: 'Particles following noise-based flow' },
+  attract: { category: 'ambient', name: 'Attract', description: 'Particles orbiting a central attractor' },
+  snake: { category: 'ambient', name: 'Snake', description: 'Colored snakes moving with fading trails' },
+  pendulum_wave: { category: 'ambient', name: 'Pendulum Wave', description: 'Oscillating dots forming wave patterns' },
+  radar: { category: 'ambient', name: 'Radar', description: 'Rotating radar sweep with fading trail' },
 
   // Color effects
   color_cycle: { category: 'color', name: 'Color Cycle', description: 'Cycle through colors' },

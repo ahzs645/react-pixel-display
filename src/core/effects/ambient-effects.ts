@@ -161,6 +161,55 @@ export class AmbientEffects {
           (state.trailBuffer as RGBColor[]).push([0, 0, 0]);
         }
         break;
+      case 'attract': {
+        const attractParticles: Array<{ x: number; y: number; vx: number; vy: number; hue: number }> = [];
+        for (let i = 0; i < 30; i++) {
+          attractParticles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            hue: Math.random(),
+          });
+        }
+        state.attractParticles = attractParticles;
+        state.trailBuffer = [];
+        for (let i = 0; i < width * height; i++) {
+          (state.trailBuffer as RGBColor[]).push([0, 0, 0]);
+        }
+        state.time = 0;
+        break;
+      }
+      case 'snake': {
+        const snakes: Array<{ segments: Array<{ x: number; y: number }>; dx: number; dy: number; hue: number }> = [];
+        for (let i = 0; i < 6; i++) {
+          const sx = Math.floor(Math.random() * width);
+          const sy = Math.floor(Math.random() * height);
+          const segments: Array<{ x: number; y: number }> = [];
+          for (let j = 0; j < 8; j++) {
+            segments.push({ x: sx, y: sy });
+          }
+          const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+          const dir = dirs[Math.floor(Math.random() * 4)];
+          snakes.push({ segments, dx: dir[0], dy: dir[1], hue: i / 6 });
+        }
+        state.snakes = snakes;
+        state.trailBuffer = [];
+        for (let i = 0; i < width * height; i++) {
+          (state.trailBuffer as RGBColor[]).push([0, 0, 0]);
+        }
+        break;
+      }
+      case 'pendulum_wave':
+        state.time = 0;
+        break;
+      case 'radar':
+        state.angle = 0;
+        state.trailBuffer = [];
+        for (let i = 0; i < width * height; i++) {
+          (state.trailBuffer as RGBColor[]).push([0, 0, 0]);
+        }
+        break;
     }
   }
 
@@ -244,6 +293,18 @@ export class AmbientEffects {
       case 'flow_field':
         this._stepFlowField(state, width, height);
         break;
+      case 'attract':
+        this._stepAttract(state, width, height);
+        break;
+      case 'snake':
+        this._stepSnake(state, width, height);
+        break;
+      case 'pendulum_wave':
+        state.time = ((state.time as number) || 0) + 0.05;
+        break;
+      case 'radar':
+        this._stepRadar(state, width, height);
+        break;
     }
   }
 
@@ -269,6 +330,10 @@ export class AmbientEffects {
       case 'munch': this._renderMunch(state); break;
       case 'bouncing': this._renderBouncing(state); break;
       case 'flow_field': this._renderFlowField(state); break;
+      case 'attract': this._renderAttract(state); break;
+      case 'snake': this._renderSnake(state); break;
+      case 'pendulum_wave': this._renderPendulumWave(state); break;
+      case 'radar': this._renderRadar(state); break;
     }
   }
 
@@ -278,7 +343,7 @@ export class AmbientEffects {
 
     for (let x = 0; x < width; x++) {
       const hue = (position + x / width) % 1;
-      const [r, g, b] = hsvToRgb(hue, 1, 0.6);
+      const [r, g, b] = hsvToRgb(hue, 1, 1);
       for (let y = 0; y < height; y++) {
         this.renderer.setPixel(x, y, [r, g, b]);
       }
@@ -987,6 +1052,247 @@ export class AmbientEffects {
         const idx = y * width + x;
         const [r, g, b] = trailBuffer[idx] || [0, 0, 0];
         this.renderer.setPixel(x, y, [r, g, b]);
+      }
+    }
+  }
+
+  // =============================================
+  // Additional HUB75-inspired effects
+  // =============================================
+
+  private _stepAttract(state: EffectState, width: number, height: number): void {
+    state.time = ((state.time as number) || 0) + 0.03;
+    const time = state.time as number;
+    const particles = state.attractParticles as Array<{ x: number; y: number; vx: number; vy: number; hue: number }>;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    // Fade trail buffer
+    for (let i = 0; i < trailBuffer.length; i++) {
+      trailBuffer[i] = [
+        trailBuffer[i][0] * 0.9,
+        trailBuffer[i][1] * 0.9,
+        trailBuffer[i][2] * 0.9,
+      ];
+    }
+
+    // Moving attractor point
+    const ax = width / 2 + Math.sin(time * 0.7) * width * 0.3;
+    const ay = height / 2 + Math.cos(time * 0.5) * height * 0.3;
+
+    for (const p of particles) {
+      const dx = ax - p.x;
+      const dy = ay - p.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) + 0.1;
+      const force = 0.3 / dist;
+
+      p.vx += dx * force;
+      p.vy += dy * force;
+      p.vx *= 0.95;
+      p.vy *= 0.95;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.hue = (p.hue + 0.003) % 1;
+
+      if (p.x < 0) p.x += width;
+      if (p.x >= width) p.x -= width;
+      if (p.y < 0) p.y += height;
+      if (p.y >= height) p.y -= height;
+
+      const px = Math.floor(p.x);
+      const py = Math.floor(p.y);
+      if (px >= 0 && px < width && py >= 0 && py < height) {
+        const [r, g, b] = hsvToRgb(p.hue, 0.9, 1);
+        const idx = py * width + px;
+        trailBuffer[idx] = [
+          Math.min(255, trailBuffer[idx][0] + r * 0.6),
+          Math.min(255, trailBuffer[idx][1] + g * 0.6),
+          Math.min(255, trailBuffer[idx][2] + b * 0.6),
+        ];
+      }
+    }
+  }
+
+  private _renderAttract(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = y * width + x;
+        const [r, g, b] = trailBuffer[idx] || [0, 0, 0];
+        this.renderer.setPixel(x, y, [r, g, b]);
+      }
+    }
+  }
+
+  private _stepSnake(state: EffectState, width: number, height: number): void {
+    const snakes = state.snakes as Array<{
+      segments: Array<{ x: number; y: number }>; dx: number; dy: number; hue: number;
+    }>;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    // Fade trail buffer
+    for (let i = 0; i < trailBuffer.length; i++) {
+      trailBuffer[i] = [
+        trailBuffer[i][0] * 0.88,
+        trailBuffer[i][1] * 0.88,
+        trailBuffer[i][2] * 0.88,
+      ];
+    }
+
+    for (const snake of snakes) {
+      // Randomly change direction
+      if (Math.random() < 0.15) {
+        const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        const dir = dirs[Math.floor(Math.random() * 4)];
+        // Don't reverse into self
+        if (dir[0] !== -snake.dx || dir[1] !== -snake.dy) {
+          snake.dx = dir[0];
+          snake.dy = dir[1];
+        }
+      }
+
+      // Move head
+      const head = snake.segments[0];
+      let nx = head.x + snake.dx;
+      let ny = head.y + snake.dy;
+      if (nx < 0) nx += width;
+      if (nx >= width) nx -= width;
+      if (ny < 0) ny += height;
+      if (ny >= height) ny -= height;
+
+      snake.segments.pop();
+      snake.segments.unshift({ x: nx, y: ny });
+      snake.hue = (snake.hue + 0.005) % 1;
+
+      // Draw segments to trail buffer
+      for (let i = 0; i < snake.segments.length; i++) {
+        const seg = snake.segments[i];
+        const fade = 1 - i / snake.segments.length;
+        const [r, g, b] = hsvToRgb(snake.hue, 0.8, fade);
+        const px = Math.floor(seg.x);
+        const py = Math.floor(seg.y);
+        if (px >= 0 && px < width && py >= 0 && py < height) {
+          const idx = py * width + px;
+          trailBuffer[idx] = [
+            Math.min(255, Math.max(trailBuffer[idx][0], r)),
+            Math.min(255, Math.max(trailBuffer[idx][1], g)),
+            Math.min(255, Math.max(trailBuffer[idx][2], b)),
+          ];
+        }
+      }
+    }
+  }
+
+  private _renderSnake(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = y * width + x;
+        const [r, g, b] = trailBuffer[idx] || [0, 0, 0];
+        this.renderer.setPixel(x, y, [r, g, b]);
+      }
+    }
+  }
+
+  private _renderPendulumWave(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const time = (state.time as number) || 0;
+
+    // Clear to dark background
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        this.renderer.setPixel(x, y, [5, 5, 10]);
+      }
+    }
+
+    const numPendulums = width;
+    const centerY = height / 2;
+
+    for (let i = 0; i < numPendulums; i++) {
+      // Each pendulum has slightly different frequency
+      const freq = 1.0 + i * 0.15;
+      const amplitude = (height / 2 - 1);
+      const y = Math.round(centerY + Math.sin(time * freq) * amplitude);
+      const hue = (i / numPendulums + time * 0.1) % 1;
+      const [r, g, b] = hsvToRgb(hue, 0.9, 1);
+
+      if (y >= 0 && y < height) {
+        this.renderer.setPixel(i, y, [r, g, b]);
+        // Glow above and below
+        if (y - 1 >= 0) {
+          this.renderer.setPixel(i, y - 1, [r * 0.3, g * 0.3, b * 0.3]);
+        }
+        if (y + 1 < height) {
+          this.renderer.setPixel(i, y + 1, [r * 0.3, g * 0.3, b * 0.3]);
+        }
+      }
+    }
+  }
+
+  private _stepRadar(state: EffectState, width: number, height: number): void {
+    (state.angle as number) = ((state.angle as number) || 0) + 0.05;
+    const angle = state.angle as number;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+
+    // Fade trail buffer
+    for (let i = 0; i < trailBuffer.length; i++) {
+      trailBuffer[i] = [
+        trailBuffer[i][0] * 0.95,
+        trailBuffer[i][1] * 0.95,
+        trailBuffer[i][2] * 0.95,
+      ];
+    }
+
+    const cx = width / 2;
+    const cy = height / 2;
+    const maxR = Math.min(width, height) / 2;
+
+    // Draw sweep line
+    for (let r = 0; r < maxR; r++) {
+      const px = Math.floor(cx + Math.cos(angle) * r);
+      const py = Math.floor(cy + Math.sin(angle) * r);
+      if (px >= 0 && px < width && py >= 0 && py < height) {
+        const intensity = r / maxR;
+        const idx = py * width + px;
+        trailBuffer[idx] = [
+          Math.min(255, 50 + intensity * 200),
+          Math.min(255, 200 + intensity * 55),
+          Math.min(255, 50 + intensity * 50),
+        ];
+      }
+    }
+  }
+
+  private _renderRadar(state: EffectState): void {
+    const { width, height } = this.renderer;
+    const trailBuffer = state.trailBuffer as RGBColor[];
+    const cx = width / 2;
+    const cy = height / 2;
+    const maxR = Math.min(width, height) / 2;
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = y * width + x;
+        const [r, g, b] = trailBuffer[idx] || [0, 0, 0];
+
+        // Draw concentric circles
+        const dx = x - cx;
+        const dy = y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const onRing = Math.abs(dist - maxR * 0.33) < 0.6 || Math.abs(dist - maxR * 0.66) < 0.6 || Math.abs(dist - maxR) < 0.6;
+
+        if (onRing) {
+          this.renderer.setPixel(x, y, [
+            Math.max(r, 20),
+            Math.max(g, 40),
+            Math.max(b, 20),
+          ]);
+        } else {
+          this.renderer.setPixel(x, y, [r, g, b]);
+        }
       }
     }
   }

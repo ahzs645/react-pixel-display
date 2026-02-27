@@ -103,6 +103,44 @@ export class TextEffects {
         state.halfWidth = 0;
         state.direction = 1;
         break;
+      case 'closing':
+        state.halfWidth = Math.ceil(width / 2);
+        state.direction = -1;
+        break;
+      case 'slice':
+        state.sliceCol = width;
+        state.direction = -1;
+        break;
+      case 'mesh':
+        state.progress = 0;
+        state.direction = 1;
+        break;
+      case 'random': {
+        const randomThresholds: number[] = [];
+        for (let i = 0; i < width * height; i++) {
+          randomThresholds.push(Math.random());
+        }
+        state.thresholds = randomThresholds;
+        state.progress = 0;
+        state.direction = 1;
+        break;
+      }
+      case 'scroll_up_left':
+        state.xOffset = -width;
+        state.yOffset = -height;
+        break;
+      case 'scroll_up_right':
+        state.xOffset = width;
+        state.yOffset = -height;
+        break;
+      case 'scroll_down_left':
+        state.xOffset = -width;
+        state.yOffset = height;
+        break;
+      case 'scroll_down_right':
+        state.xOffset = width;
+        state.yOffset = height;
+        break;
     }
   }
 
@@ -268,6 +306,78 @@ export class TextEffects {
         }
         break;
       }
+      case 'closing': {
+        const halfMaxC = Math.ceil(width / 2);
+        (state.halfWidth as number) += (state.direction as number);
+        if ((state.halfWidth as number) >= halfMaxC) {
+          state.halfWidth = halfMaxC;
+          state.direction = -1;
+        } else if ((state.halfWidth as number) <= 0) {
+          state.halfWidth = 0;
+          state.direction = 1;
+        }
+        break;
+      }
+      case 'slice':
+        (state.sliceCol as number) += (state.direction as number);
+        if ((state.sliceCol as number) <= -1) {
+          state.direction = 1;
+        } else if ((state.sliceCol as number) >= width) {
+          state.direction = -1;
+        }
+        break;
+      case 'mesh':
+        (state.progress as number) += (state.direction as number) * 0.05;
+        if ((state.progress as number) >= 1) {
+          state.progress = 1;
+          state.direction = -1;
+        } else if ((state.progress as number) <= 0) {
+          state.progress = 0;
+          state.direction = 1;
+        }
+        break;
+      case 'random':
+        (state.progress as number) += (state.direction as number) * 0.015;
+        if ((state.progress as number) >= 1) {
+          state.progress = 1;
+          state.direction = -1;
+        } else if ((state.progress as number) <= 0) {
+          state.progress = 0;
+          state.direction = 1;
+        }
+        break;
+      case 'scroll_up_left':
+        (state.xOffset as number) += 1;
+        (state.yOffset as number) += 1;
+        if ((state.xOffset as number) > width) {
+          state.xOffset = -width;
+          state.yOffset = -this.renderer.height;
+        }
+        break;
+      case 'scroll_up_right':
+        (state.xOffset as number) -= 1;
+        (state.yOffset as number) += 1;
+        if ((state.xOffset as number) < -width) {
+          state.xOffset = width;
+          state.yOffset = -this.renderer.height;
+        }
+        break;
+      case 'scroll_down_left':
+        (state.xOffset as number) += 1;
+        (state.yOffset as number) -= 1;
+        if ((state.xOffset as number) > width) {
+          state.xOffset = -width;
+          state.yOffset = this.renderer.height;
+        }
+        break;
+      case 'scroll_down_right':
+        (state.xOffset as number) -= 1;
+        (state.yOffset as number) -= 1;
+        if ((state.xOffset as number) < -width) {
+          state.xOffset = width;
+          state.yOffset = this.renderer.height;
+        }
+        break;
     }
   }
 
@@ -394,6 +504,58 @@ export class TextEffects {
           const center = Math.floor(width / 2);
           if (x >= center - halfWidth && x <= center + halfWidth) {
             color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'closing') {
+          const halfWidth = (state.halfWidth as number) || 0;
+          const center = Math.floor(width / 2);
+          if (x < center - halfWidth || x > center + halfWidth) {
+            color = displayPixels[y * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'slice') {
+          const sliceCol = (state.sliceCol as number) || 0;
+          const dir = (state.direction as number) || -1;
+          if (dir < 0) {
+            if (x >= sliceCol) {
+              color = displayPixels[y * width + x] || '#111';
+            } else {
+              color = '#111';
+            }
+          } else {
+            if (x <= sliceCol) {
+              color = displayPixels[y * width + x] || '#111';
+            } else {
+              color = '#111';
+            }
+          }
+        } else if (effectName === 'mesh') {
+          const progress = (state.progress as number) || 0;
+          const meshCols = Math.floor(progress * height);
+          const isEvenCol = x % 2 === 0;
+          const sourceY = isEvenCol ? y + (height - meshCols) : y - (height - meshCols);
+          if (sourceY >= 0 && sourceY < height) {
+            color = displayPixels[sourceY * width + x] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'random') {
+          const thresholds = state.thresholds as number[];
+          const progress = (state.progress as number) || 0;
+          const idx = y * width + x;
+          if (thresholds[idx] < progress) {
+            color = displayPixels[idx] || '#111';
+          } else {
+            color = '#111';
+          }
+        } else if (effectName === 'scroll_up_left' || effectName === 'scroll_up_right' ||
+                   effectName === 'scroll_down_left' || effectName === 'scroll_down_right') {
+          const sourceX = x + ((state.xOffset as number) || 0);
+          const sourceY = y + ((state.yOffset as number) || 0);
+          if (sourceX >= 0 && sourceX < width && sourceY >= 0 && sourceY < height) {
+            color = displayPixels[sourceY * width + sourceX] || '#111';
           } else {
             color = '#111';
           }
